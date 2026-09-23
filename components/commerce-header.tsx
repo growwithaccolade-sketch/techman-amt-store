@@ -11,7 +11,7 @@ export default function CommerceHeader() {
       <div className="announcement"><span>⚡ Better tech, smarter upgrades</span><span>Nationwide delivery options</span><span>Secure shopping experience</span></div>
       <header className="nav shell">
         <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
-        <nav className="desktopNav"><Link href="/#shop">Shop</Link><Link href="/#deals">Deals</Link><Link href="/#creator">Creator Tools</Link></nav>
+        <nav className="desktopNav"><Link href="/#shop">Shop</Link><Link href="/#deals">Deals</Link><Link href="/#creator">Creator Tools</Link><Link href="/track-order">Track Order</Link></nav>
         <div className="navActions"><Link className="cartBtn" href="/cart"><ShoppingBag size={18}/> Cart <span>{totalItems}</span></Link></div>
       </header>
     </>
