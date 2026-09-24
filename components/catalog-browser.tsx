@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ArrowUpRight, Heart, Search, ShoppingBag } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCart } from "@/components/cart-provider";
-import { money } from "@/lib/products";\nimport ProductImage from "@/components/product-image";
+import { money } from "@/lib/products";
+import ProductImage from "@/components/product-image";
 
 export default function CatalogBrowser({
   title = "Shop TechMan AMT",
