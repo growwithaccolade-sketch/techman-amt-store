@@ -46,7 +46,7 @@ export async function sendOrderStatusEmail(input: {
   try {
     await sendTransactionalEmail({
       to: input.email,
-      subject: `${statusCopy.subject} — ${input.reference}`,
+      subject: `${statusCopy.subject}: ${input.reference}`,
       html,
       idempotencyKey: `order-status/${input.reference}/${input.status}`,
     });
