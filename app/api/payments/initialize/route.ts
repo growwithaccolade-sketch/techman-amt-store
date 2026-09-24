@@ -4,6 +4,7 @@ import { getStoreProductsByIds } from "@/lib/catalog";
 import type { Product } from "@/lib/products";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
 import { initializePaystackTransaction } from "@/lib/paystack";
+import { validateCoupon } from "@/lib/coupons";
 
 type CheckoutPayload = {
   email?: string;
@@ -13,6 +14,7 @@ type CheckoutPayload = {
   city?: string;
   state?: string;
   items?: Array<{ id: number; qty: number }>;
+  couponCode?: string;
 };
 
 export async function POST(request: Request) {
@@ -41,6 +43,23 @@ export async function POST(request: Request) {
 
   const lines = resolved.filter(Boolean) as Array<{ product: Product; qty: number }>;
   const subtotal = lines.reduce((sum, line) => sum + line.product.price * line.qty, 0);
+  let discount = 0;
+  let couponCode: string | null = null;
+
+  if (body.couponCode?.trim()) {
+    const coupon = await validateCoupon(body.couponCode, subtotal);
+    if (!coupon.valid) {
+      return NextResponse.json({ error: coupon.message }, { status: 400 });
+    }
+    discount = coupon.discount;
+    couponCode = coupon.code;
+  }
+
+  const total = Math.max(0, subtotal - discount);
+  if (total <= 0) {
+    return NextResponse.json({ error: "This order total must be greater than zero to use online payment." }, { status: 400 });
+  }
+
   const reference = `TAMT-${Date.now()}-${randomUUID().slice(0, 8)}`;
   const supabase = getSupabaseAdmin();
 
@@ -53,8 +72,10 @@ export async function POST(request: Request) {
     city: body.city!.trim(),
     state: body.state!.trim(),
     subtotal_ngn: subtotal,
+    discount_ngn: discount,
+    coupon_code: couponCode,
     delivery_fee_ngn: 0,
-    total_ngn: subtotal,
+    total_ngn: total,
     status: "pending",
     payment_status: "pending",
   }).select("id").single();
@@ -81,10 +102,10 @@ export async function POST(request: Request) {
     const origin = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
     const payment = await initializePaystackTransaction({
       email: body.email!,
-      amountKobo: subtotal * 100,
+      amountKobo: total * 100,
       reference,
       callbackUrl: `${origin}/payment/verify?reference=${encodeURIComponent(reference)}`,
-      metadata: { orderId: order.id, customerName: body.name, phone: body.phone },
+      metadata: { orderId: order.id, customerName: body.name, phone: body.phone, couponCode, discount },
     });
 
     return NextResponse.json({ authorizationUrl: payment.authorization_url, reference });
