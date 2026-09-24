@@ -111,17 +111,53 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
   }, [catalog, query, category]);
 
   const getBySlug = (slug: string) => catalog.find((product) => product.slug === slug);
-  const heroProducts = heroSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
+  const curatedHero = heroSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
+  const heroProducts = curatedHero.length >= 3 ? curatedHero.slice(0, 3) : catalog.slice(0, 3);
   const primaryHero = heroProducts[0];
   const secondaryHero = heroProducts[1];
   const tertiaryHero = heroProducts[2];
-  const creatorProduct = getBySlug(creatorSlug) || catalog.find((product) => product.category === "Creator Tools");
-  const dealProducts = dealSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
-  const defaultFeatured = featuredSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
+
+  const heroIds = new Set(heroProducts.map((product) => product.id));
+  const creatorProduct =
+    getBySlug(creatorSlug) ||
+    catalog.find((product) => product.category === "Creator Tools" && !heroIds.has(product.id));
+
+  const curatedDeals = dealSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
+  const dealProducts = [
+    ...curatedDeals,
+    ...catalog.filter((product) =>
+      product.category === "Accessories" &&
+      !heroIds.has(product.id) &&
+      !curatedDeals.some((item) => item.id === product.id)
+    ),
+  ].slice(0, 3);
+
+  const categoryIds = new Set(
+    Object.values(categoryShowcase)
+      .map(getBySlug)
+      .filter(Boolean)
+      .map((product) => product!.id)
+  );
+  const excludedIds = new Set([
+    ...heroProducts.map((product) => product.id),
+    ...dealProducts.map((product) => product.id),
+    ...(creatorProduct ? [creatorProduct.id] : []),
+    ...Array.from(categoryIds),
+  ]);
+
+  const curatedFeatured = featuredSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
+  const defaultFeatured = [
+    ...curatedFeatured,
+    ...catalog.filter((product) =>
+      !excludedIds.has(product.id) &&
+      !curatedFeatured.some((item) => item.id === product.id)
+    ),
+  ].filter((product, index, list) => list.findIndex((item) => item.id === product.id) === index).slice(0, 9);
+
   const defaultMode = category === "All" && !query.trim();
   const displayProducts = defaultMode
     ? defaultFeatured
-    : visibleProducts.filter((product) => !heroSlugs.includes(product.slug)).slice(0, 9);
+    : visibleProducts.filter((product) => !heroIds.has(product.id)).slice(0, 9);
   const heroTitle = (homeContent?.title || "Technology,|properly selected.").split("|");
   const contactSection = homeContent?.sections?.[0];
   const newsletterSection = homeContent?.sections?.[1];
