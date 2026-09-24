@@ -9,6 +9,7 @@ import {
   Check,
   Headphones,
   Heart,
+  Home,
   Laptop,
   Menu,
   Mic2,
