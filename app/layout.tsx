@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CartProvider } from "@/components/cart-provider";
 import { getStoreCatalog } from "@/lib/catalog";
+import { getStoreSettings } from "@/lib/store-settings";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +30,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const catalog = await getStoreCatalog();
-  return <html lang="en"><body><CartProvider catalog={catalog}>{children}</CartProvider></body></html>;
+  const [catalog, settings] = await Promise.all([getStoreCatalog(), getStoreSettings()]);
+  return <html lang="en"><body><CartProvider catalog={catalog} settings={settings}>{children}</CartProvider></body></html>;
 }
