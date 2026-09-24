@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import AdminNav from "@/components/admin-nav";
-import { hasAdminSession, loginAdmin } from "./actions";
+import { getAdminSession, hasAdminSession, loginAdmin } from "./actions";
 import { getAdminMetrics } from "@/lib/admin-data";
 import { money } from "@/lib/products";
 
@@ -16,23 +16,24 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
           <span className="kicker">PRIVATE ADMIN</span>
           <h1>Store control starts here.</h1>
-          <p>This area is intentionally hidden from public navigation and protected by an HTTP-only server session.</p>
-          {error === "invalid" && <div className="adminError">That access key is not valid.</div>}
-          {error === "config" && <div className="adminError">ADMIN_ACCESS_KEY is not configured on the server yet.</div>}
-          <form action={loginAdmin}><label>Admin access key<input name="accessKey" type="password" required autoComplete="current-password"/></label><button className="primaryAction" type="submit"><ShieldCheck size={18}/> Sign in securely</button></form>
-          <small>Before multiple staff members get access, upgrade this single-owner gate to role-based authentication with MFA.</small>
+          <p>Sign in to manage products, pages, orders, staff and store settings.</p>
+          {error === "invalid" && <div className="adminError">Incorrect username or password.</div>}
+          {error === "owner" && <div className="adminError">Owner access is required for that action.</div>}
+          <form action={loginAdmin}><label>Username<input name="username" required autoComplete="username" defaultValue="admin"/></label><label>Password<input name="password" type="password" required autoComplete="current-password"/></label><button className="primaryAction" type="submit"><ShieldCheck size={18}/> Sign in</button></form>
+          <small>Owner and staff sessions are server-signed. Add staff from the Staff section after signing in.</small>
         </div>
       </main>
     );
   }
 
   const metrics = await getAdminMetrics();
+  const session = await getAdminSession();
 
   return (
     <main className="adminShell">
       <AdminNav active="overview"/>
       <section className="adminMain">
-        <div className="adminTop"><div><span className="kicker">STORE OVERVIEW</span><h1>TechMan AMT Admin</h1></div><Link href="/" className="secondaryAction">View storefront</Link></div>
+        <div className="adminTop"><div><span className="kicker">STORE OVERVIEW</span><h1>TechMan AMT Admin</h1><p className="adminMuted">Signed in as {session?.displayName} · {session?.role}</p></div><Link href="/" className="secondaryAction">View storefront</Link></div>
         {!metrics.backend && <div className="adminNotice warning">The admin is running in demo fallback mode. Connect Supabase and apply both migrations to turn on live product, order and revenue data.</div>}
         <div className="metricGrid">
           <article><span>Products</span><strong>{metrics.products}</strong><small>{metrics.backend ? "Database catalog" : "Demo catalog fallback"}</small></article>
