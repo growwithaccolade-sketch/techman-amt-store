@@ -4,11 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
-import { money, products } from "@/lib/products";
+import { money } from "@/lib/products";
 
 export default function CartPageClient() {
-  const { lines, setQty, removeItem } = useCart();
-  const items = lines.map((line) => ({ line, product: products.find((p) => p.id === line.id) })).filter((item) => item.product);
+  const { catalog, lines, setQty, removeItem } = useCart();
+  const items = lines.map((line) => ({ line, product: catalog.find((p) => p.id === line.id) })).filter((item) => item.product);
   const subtotal = items.reduce((sum, item) => sum + (item.product?.price || 0) * item.line.qty, 0);
 
   if (!items.length) {
@@ -22,7 +22,7 @@ export default function CartPageClient() {
         <div className="cartLines">
           {items.map(({ line, product }) => product && (
             <article className="cartLine" key={product.id}>
-              <Image src={product.image} alt={product.name} width={170} height={170}/>
+              <Image src={product.image} alt={product.name} width={170} height={170} unoptimized/>
               <div className="cartLineInfo">
                 <span className="brandName">{product.brand}</span>
                 <Link href={`/product/${product.slug}`}><h2>{product.name}</h2></Link>
