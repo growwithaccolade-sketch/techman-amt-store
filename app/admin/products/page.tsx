@@ -18,6 +18,8 @@ type Row = {
   badge?: string | null;
   warranty?: string | null;
   condition?: string | null;
+  highlights?: string[] | null;
+  specs?: Record<string,string> | null;
   active: boolean;
 };
 
@@ -46,7 +48,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
               <div className="fieldGrid"><label>Price in ₦<input name="price" type="number" min="0" step="1" required/></label><label>Old price in ₦<input name="oldPrice" type="number" min="0" step="1"/></label></div>
               <div className="fieldGrid"><label>Stock quantity<input name="stock" type="number" min="0" step="1" required/></label><label>Condition<select name="condition"><option>New</option><option>UK Used</option></select></label></div>
               <label>Upload product image<input name="imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"/></label><label>Or image URL<input name="image" type="url" placeholder="https://..."/></label>
-              <label>Short selling description<textarea name="blurb" rows={3}/></label>
+              <label>Short selling description<textarea name="blurb" rows={3}/></label><label>Highlights, one per line<textarea name="highlights" rows={4} placeholder={"A18 Pro chip\n256GB storage\nUSB-C"}/></label><label>Specifications, one Key: Value per line<textarea name="specs" rows={6} placeholder={"Storage: 256GB\nDisplay: 6.9-inch\nColor: Black"}/></label>
               <div className="fieldGrid"><label>Badge<input name="badge" placeholder="Bestseller"/></label><label>Warranty<input name="warranty" placeholder="1 year seller warranty"/></label></div>
               <button className="primaryAction" type="submit" disabled={!backend}>Create product</button>
             </form>
@@ -69,7 +71,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                     <div className="fieldGrid"><label>Category<input name="category" defaultValue={product.category} required/></label><label>Stock<input name="stock" type="number" min="0" defaultValue={product.stock} required/></label></div>
                     <div className="fieldGrid"><label>Price<input name="price" type="number" min="0" defaultValue={product.price_ngn} required/></label><label>Old price<input name="oldPrice" type="number" min="0" defaultValue={product.old_price_ngn ?? ""}/></label></div>
                     <label>Replace image<input name="imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"/></label><label>Current / fallback image URL<input name="image" type="url" defaultValue={product.image_url ?? ""}/></label>
-                    <label>Description<textarea name="blurb" rows={3} defaultValue={product.blurb ?? ""}/></label>
+                    <label>Description<textarea name="blurb" rows={3} defaultValue={product.blurb ?? ""}/></label><label>Highlights, one per line<textarea name="highlights" rows={4} defaultValue={(product.highlights || []).join("\n")}/></label><label>Specifications, one Key: Value per line<textarea name="specs" rows={6} defaultValue={Object.entries(product.specs || {}).map(([k,v])=>`${k}: ${v}`).join("\n")}/></label>
                     <div className="fieldGrid"><label>Badge<input name="badge" defaultValue={product.badge ?? ""}/></label><label>Warranty<input name="warranty" defaultValue={product.warranty ?? ""}/></label></div>
                     <div className="fieldGrid"><label>Condition<select name="condition" defaultValue={product.condition ?? "New"}><option>New</option><option>UK Used</option></select></label><label className="checkLabel"><input name="active" type="checkbox" defaultChecked={product.active}/> Visible on storefront</label></div>
                     <div className="adminRowActions"><button className="primaryAction" type="submit">Save changes</button></div>
