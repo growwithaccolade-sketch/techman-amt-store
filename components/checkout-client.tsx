@@ -2,10 +2,14 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
-import { Check, CreditCard, LockKeyhole, MessageCircle, TicketPercent } from "lucide-react";
+import { Check, CreditCard, LockKeyhole, MapPin, MessageCircle, TicketPercent } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
 import { makeWhatsappUrl } from "@/lib/site";
+
+const nigeriaStates = ["Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT","Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"];
+
+type DeliveryQuote = { configured: boolean; matched: boolean; fee: number; message: string };
 
 export default function CheckoutClient() {
   const { catalog, settings, lines } = useCart();
@@ -15,14 +19,48 @@ export default function CheckoutClient() {
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; message: string } | null>(null);
   const [couponState, setCouponState] = useState<"idle" | "checking" | "error">("idle");
   const [couponMessage, setCouponMessage] = useState("");
+  const [deliveryState, setDeliveryState] = useState("");
+  const [deliveryQuote, setDeliveryQuote] = useState<DeliveryQuote | null>(null);
+  const [deliveryLoading, setDeliveryLoading] = useState(false);
+
   const items = useMemo(() => lines.map((line) => ({ line, product: catalog.find((p) => p.id === line.id) })).filter((x) => x.product), [catalog, lines]);
   const subtotal = items.reduce((sum, item) => sum + (item.product?.price || 0) * item.line.qty, 0);
-  const total = Math.max(0, subtotal - (appliedCoupon?.discount || 0));
+  const merchandiseTotal = Math.max(0, subtotal - (appliedCoupon?.discount || 0));
+  const total = merchandiseTotal + (deliveryQuote?.matched ? deliveryQuote.fee : 0);
+
+  async function quoteDelivery(state = deliveryState, coupon = appliedCoupon?.code || "") {
+    if (!state) return;
+    setDeliveryLoading(true);
+    setDeliveryQuote(null);
+    try {
+      const response = await fetch("/api/delivery/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ state, couponCode: coupon, items: lines }),
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        setDeliveryQuote({ configured: false, matched: false, fee: 0, message: payload.error || "Delivery quote unavailable." });
+      } else {
+        setDeliveryQuote({
+          configured: Boolean(payload.configured),
+          matched: Boolean(payload.matched),
+          fee: Number(payload.fee || 0),
+          message: String(payload.message || ""),
+        });
+      }
+    } catch {
+      setDeliveryQuote({ configured: false, matched: false, fee: 0, message: "Delivery pricing is temporarily unavailable." });
+    } finally {
+      setDeliveryLoading(false);
+    }
+  }
 
   async function applyCoupon() {
     setCouponState("checking");
     setCouponMessage("");
     setAppliedCoupon(null);
+    setDeliveryQuote(null);
     try {
       const response = await fetch("/api/coupons/validate", {
         method: "POST",
@@ -36,8 +74,10 @@ export default function CheckoutClient() {
         return;
       }
       setCouponState("idle");
-      setAppliedCoupon({ code: payload.code, discount: Number(payload.discount), message: payload.message });
+      const nextCoupon = { code: payload.code, discount: Number(payload.discount), message: payload.message };
+      setAppliedCoupon(nextCoupon);
       setCouponCode(payload.code);
+      if (deliveryState) await quoteDelivery(deliveryState, payload.code);
     } catch {
       setCouponState("error");
       setCouponMessage("Coupon validation is temporarily unavailable.");
@@ -52,7 +92,8 @@ export default function CheckoutClient() {
     const submitEvent = e.nativeEvent as SubmitEvent;
     const intent = (submitEvent.submitter as HTMLButtonElement | null)?.value || "online";
     const itemText = items.map(({ line, product }) => `${product?.name} x${line.qty}`).join(", ");
-    const wa = makeWhatsappUrl(settings.whatsappNumber, `Hello TechMan AMT, I want to place an order. Name: ${data.get("name")}. Phone: ${data.get("phone")}. Delivery: ${data.get("address")}, ${data.get("city")}, ${data.get("state")}. Items: ${itemText}. Subtotal: ${money(subtotal)}.${appliedCoupon ? ` Coupon ${appliedCoupon.code}: -${money(appliedCoupon.discount)}. Total before delivery: ${money(total)}.` : ""}`);
+    const deliveryText = deliveryQuote?.matched ? ` Delivery: ${money(deliveryQuote.fee)}.` : "";
+    const wa = makeWhatsappUrl(settings.whatsappNumber, `Hello TechMan AMT, I want to place an order. Name: ${data.get("name")}. Phone: ${data.get("phone")}. Delivery: ${data.get("address")}, ${data.get("city")}, ${data.get("state")}. Items: ${itemText}. Subtotal: ${money(subtotal)}.${appliedCoupon ? ` Coupon ${appliedCoupon.code}: -${money(appliedCoupon.discount)}.` : ""}${deliveryText} Estimated total: ${money(total)}.`);
 
     if (intent === "whatsapp") {
       if (!wa) {
@@ -100,29 +141,37 @@ export default function CheckoutClient() {
 
   return (
     <section className="checkoutPage shell">
-      <div className="pageIntro"><span className="kicker">CHECKOUT</span><h1>Simple, clear, secure.</h1><p>Enter your details, choose secure online payment or continue with assisted WhatsApp ordering.</p></div>
+      <div className="pageIntro"><span className="kicker">CHECKOUT</span><h1>Simple, clear, secure.</h1><p>Enter your details, check delivery, apply a valid offer and choose secure online payment or assisted WhatsApp ordering.</p></div>
       <form className="checkoutLayout" onSubmit={submit}>
         <div className="checkoutForm">
           <div className="formSection"><h2>Contact</h2><label>Full name<input name="name" required autoComplete="name"/></label><div className="fieldGrid"><label>Phone number<input name="phone" required inputMode="tel"/></label><label>Email<input name="email" type="email" required autoComplete="email"/></label></div></div>
-          <div className="formSection"><h2>Delivery address</h2><label>Street address<input name="address" required autoComplete="street-address"/></label><div className="fieldGrid"><label>City<input name="city" required/></label><label>State<input name="state" required/></label></div><label>Landmark or delivery note<textarea name="note" rows={4}/></label></div>
+
+          <div className="formSection"><h2>Delivery address</h2><label>Street address<input name="address" required autoComplete="street-address"/></label><div className="fieldGrid"><label>City<input name="city" required/></label><label>State<select name="state" required value={deliveryState} onChange={(e)=>{setDeliveryState(e.target.value);setDeliveryQuote(null);}}><option value="">Choose state</option>{nigeriaStates.map((state)=><option key={state} value={state}>{state}</option>)}</select></label></div><label>Landmark or delivery note<textarea name="note" rows={4}/></label>
+            <button className="deliveryQuoteButton" type="button" onClick={()=>quoteDelivery()} disabled={!deliveryState || deliveryLoading}><MapPin size={17}/>{deliveryLoading ? "Checking delivery..." : "Calculate delivery"}</button>
+            {deliveryQuote && <div className={`deliveryQuoteResult ${deliveryQuote.matched ? "ok" : deliveryQuote.configured ? "warn" : ""}`}><span>{deliveryQuote.message}</span>{deliveryQuote.matched && <b>{deliveryQuote.fee ? money(deliveryQuote.fee) : "Free delivery"}</b>}</div>}
+          </div>
+
           <div className="couponBox">
             <div className="couponTitle"><TicketPercent size={18}/><span><b>Have a coupon?</b><small>Discounts are rechecked on the server before payment starts.</small></span></div>
-            <div className="couponApply"><input value={couponCode} onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setAppliedCoupon(null); }} placeholder="Enter code"/><button type="button" onClick={applyCoupon} disabled={!couponCode.trim() || couponState === "checking"}>{couponState === "checking" ? "Checking..." : "Apply"}</button></div>
+            <div className="couponApply"><input value={couponCode} onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setAppliedCoupon(null); setDeliveryQuote(null); }} placeholder="Enter code"/><button type="button" onClick={applyCoupon} disabled={!couponCode.trim() || couponState === "checking"}>{couponState === "checking" ? "Checking..." : "Apply"}</button></div>
             {appliedCoupon && <div className="couponSuccess"><Check size={15}/>{appliedCoupon.message}</div>}
             {couponState === "error" && <div className="couponError">{couponMessage}</div>}
           </div>
-          <div className="secureNote"><LockKeyhole size={18}/><span><b>Your payment key never enters the browser.</b><small>Online transactions are initialized on the server and completed on Paystack&apos;s secure checkout.</small></span></div>
+
+          <div className="secureNote"><LockKeyhole size={18}/><span><b>Your payment key never enters the browser.</b><small>Online transactions are initialized on the server and completed on Paystack&apos;s secure checkout. Final delivery and coupon amounts are recalculated server-side.</small></span></div>
           {error && <div className="checkoutError">{error}</div>}
         </div>
+
         <aside className="orderSummary">
           <span className="kicker">YOUR ORDER</span>
           {items.map(({ line, product }) => product && <div className="checkoutItem" key={product.id}><span>{product.name} × {line.qty}</span><strong>{money(product.price * line.qty)}</strong></div>)}
           <div><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
           {appliedCoupon && <div className="discountLine"><span>Coupon {appliedCoupon.code}</span><strong>-{money(appliedCoupon.discount)}</strong></div>}
-          <div className="summaryTotal"><span>Total before delivery</span><strong>{money(total)}</strong></div>
+          <div><span>Delivery</span><strong>{deliveryQuote?.matched ? (deliveryQuote.fee ? money(deliveryQuote.fee) : "Free") : "Calculate above"}</strong></div>
+          <div className="summaryTotal"><span>Estimated total</span><strong>{money(total)}</strong></div>
           <button className="primaryAction" name="intent" value="online" type="submit" disabled={loading}><CreditCard size={18}/>{loading ? "Starting secure payment..." : "Pay securely online"}</button>
           <button className="whatsappCheckout" name="intent" value="whatsapp" type="submit"><MessageCircle size={18}/> Order on WhatsApp</button>
-          <small>Delivery fees can be added after your delivery location is confirmed.</small>
+          <small>The payment server recalculates price, discount, stock and delivery before creating the Paystack transaction.</small>
         </aside>
       </form>
     </section>
