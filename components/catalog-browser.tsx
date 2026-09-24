@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Heart, Search, ShoppingBag } from "lucide-react";
+import { ArrowUpRight, Heart, Search, ShoppingBag } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
@@ -34,7 +34,11 @@ export default function CatalogBrowser({
     const filtered = catalog.filter((product) => {
       const categoryMatch = category === "All" || product.category === category;
       const brandMatch = brand === "All" || product.brand === brand;
-      const queryMatch = !q || `${product.name} ${product.brand} ${product.category} ${product.blurb}`.toLowerCase().includes(q);
+      const queryMatch =
+        !q ||
+        `${product.name} ${product.brand} ${product.category} ${product.blurb}`
+          .toLowerCase()
+          .includes(q);
       return categoryMatch && brandMatch && queryMatch;
     });
 
@@ -47,40 +51,85 @@ export default function CatalogBrowser({
   }, [catalog, query, category, brand, sort]);
 
   return (
-    <main className="catalogPage shell">
-      <section className="catalogHero">
+    <main className="catalogPage shell premiumCatalogPage">
+      <section className="catalogHero premiumCatalogHero">
         <span className="kicker">TECHMAN AMT STORE</span>
         <h1>{title}</h1>
         <p>{intro}</p>
       </section>
-      <div className="catalogControls">
-        <label className="catalogSearch"><Search size={18}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products, brands or categories"/></label>
+
+      <div className="catalogControls premiumCatalogControls">
+        <label className="catalogSearch">
+          <span>Search</span>
+          <div><Search size={17}/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Phones, laptops, brands..."/></div>
+        </label>
         <label>Category<select value={category} onChange={(e) => setCategory(e.target.value)}>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label>Brand<select value={brand} onChange={(e) => setBrand(e.target.value)}>{brands.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label>Sort<select value={sort} onChange={(e) => setSort(e.target.value)}><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="stock">Most stock</option></select></label>
       </div>
-      <div className="catalogMeta"><b>{products.length}</b> matching products</div>
-      {products.length ? <div className="productGrid">
-        {products.map((product) => {
-          const inCart = lines.some((line) => line.id === product.id);
-          return <article className="productCard" key={product.id}>
-            <div className="productImageWrap">
-              {product.badge && <span className="productBadge">{product.badge}</span>}
-              <button className={`wishBtn ${wishlist.includes(product.id) ? "on" : ""}`} onClick={() => toggleWishlist(product.id)} aria-label="Save product"><Heart size={18} fill={wishlist.includes(product.id) ? "currentColor" : "none"}/></button>
-              <Link href={`/product/${product.slug}`}><Image className="productImage" src={product.image} alt={product.name} width={700} height={700} unoptimized/></Link>
-            </div>
-            <div className="productInfo">
-              <span className="brandName">{product.brand} · {product.category}</span>
-              <Link href={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
-              <p>{product.blurb}</p>
-              <div className="priceLine"><strong>{money(product.price)}</strong>{product.oldPrice && <del>{money(product.oldPrice)}</del>}</div>
-              <div className={product.stock > 0 ? "catalogStock" : "catalogStock out"}>{product.stock > 0 ? `${product.stock} available` : "Out of stock"}</div>
-              <button className={`addBtn ${inCart ? "added" : ""}`} onClick={() => addItem(product.id)} disabled={product.stock <= 0}>{product.stock <= 0 ? "Out of stock" : inCart ? "Add another" : "Add to cart"} <ShoppingBag size={17}/></button>
-              <Link className="viewProduct" href={`/product/${product.slug}`}>View full details <ArrowRight size={14}/></Link>
-            </div>
-          </article>;
-        })}
-      </div> : <div className="emptyState"><Search size={38}/><h3>No products match those filters.</h3><p>Try clearing a brand, category or search phrase.</p><button onClick={() => {setQuery(""); setCategory("All"); setBrand("All");}}>Clear filters</button></div>}
+
+      <div className="catalogMeta premiumCatalogMeta">
+        <span><b>{products.length}</b> products</span>
+        {(query || category !== "All" || brand !== "All") && <button onClick={() => { setQuery(""); setCategory("All"); setBrand("All"); }}>Clear filters</button>}
+      </div>
+
+      {products.length ? (
+        <div className="premiumProductGrid catalogPremiumGrid">
+          {products.map((product) => {
+            const inCart = lines.some((line) => line.id === product.id);
+            return (
+              <article className="premiumProductCard" key={product.id}>
+                <div className="premiumProductMedia">
+                  {product.badge && <span className="productBadge">{product.badge}</span>}
+                  <button
+                    className={`wishBtn ${wishlist.includes(product.id) ? "on" : ""}`}
+                    onClick={() => toggleWishlist(product.id)}
+                    aria-label="Save product"
+                  >
+                    <Heart size={17} fill={wishlist.includes(product.id) ? "currentColor" : "none"}/>
+                  </button>
+                  <Link href={`/product/${product.slug}`}>
+                    <Image src={product.image} alt={product.name} fill sizes="(max-width: 720px) 92vw, (max-width: 1100px) 46vw, 31vw" unoptimized/>
+                  </Link>
+                </div>
+
+                <div className="premiumProductBody">
+                  <div className="productMetaLine"><span>{product.brand}</span><span>{product.category}</span></div>
+                  <Link href={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
+                  <p>{product.blurb}</p>
+                  <div className="premiumPriceLine">
+                    <strong>{money(product.price)}</strong>
+                    {product.oldPrice && <del>{money(product.oldPrice)}</del>}
+                  </div>
+                  <div className={product.stock > 0 ? "premiumStock" : "premiumStock out"}>
+                    {product.stock > 0 ? `${product.stock} available` : "Out of stock"}
+                  </div>
+                  <div className="premiumCardActions">
+                    <button
+                      className={`premiumAddButton ${inCart ? "added" : ""}`}
+                      onClick={() => addItem(product.id)}
+                      disabled={product.stock <= 0}
+                    >
+                      <ShoppingBag size={16}/>
+                      {product.stock <= 0 ? "Out of stock" : inCart ? "Add another" : "Add to cart"}
+                    </button>
+                    <Link className="premiumDetailButton" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
+                      <ArrowUpRight size={18}/>
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="emptyState premiumEmptyState">
+          <Search size={34}/>
+          <h3>No products match those filters.</h3>
+          <p>Try clearing a brand, category or search phrase.</p>
+          <button onClick={() => { setQuery(""); setCategory("All"); setBrand("All"); }}>Clear filters</button>
+        </div>
+      )}
     </main>
   );
 }
