@@ -20,11 +20,11 @@ export default function CommerceHeader() {
         <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
 
         <nav className="desktopNav premiumDesktopNav">
+          <Link href="/">Home</Link>
           <Link href="/shop">Shop</Link>
           <Link href="/#collections">Collections</Link>
           <Link href="/blog">Guides</Link>
-          <Link href="/trade-in">Trade In</Link>
-          <Link href="/track-order">Track Order</Link>
+          <Link href="/contact">Contact</Link>
         </nav>
 
         <div className="navActions premiumNavActions">
@@ -52,10 +52,10 @@ export default function CommerceHeader() {
             <button onClick={() => setOpen(false)} aria-label="Close menu"><X/></button>
           </div>
           <nav>
+            <Link href="/" onClick={() => setOpen(false)}>Home</Link>
             <Link href="/shop" onClick={() => setOpen(false)}>Shop</Link>
             <Link href="/blog" onClick={() => setOpen(false)}>Guides</Link>
-            <Link href="/trade-in" onClick={() => setOpen(false)}>Trade In</Link>
-            <Link href="/corporate" onClick={() => setOpen(false)}>Bulk Orders</Link>
+            <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
             <Link href="/track-order" onClick={() => setOpen(false)}>Track Order</Link>
           </nav>
           <div className="mobileMenuUtilities">
