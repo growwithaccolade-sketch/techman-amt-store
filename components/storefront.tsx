@@ -28,6 +28,7 @@ import { money } from "@/lib/products";
 import { makeWhatsappUrl } from "@/lib/site";
 import NewsletterForm from "@/components/newsletter-form";
 import ProductImage from "@/components/product-image";
+import BrandLogo from "@/components/brand-logo";
 import type { EditablePage } from "@/lib/site-pages";
 
 const categoryMeta = [
@@ -86,10 +87,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
       </div>
 
       <header className="nav shell premiumNav">
-        <Link href="/" className="brand premiumBrand">
-          <span className="brandMark">T</span>
-          <span>TECHMAN <b>AMT</b></span>
-        </Link>
+        <BrandLogo/>
 
         <nav className="desktopNav premiumDesktopNav">
           <Link className="current" aria-current="page" href="/">Home</Link>
@@ -124,9 +122,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
       {mobileOpen && (
         <div className="mobileMenu premiumMobileMenu">
           <div className="mobileMenuTop">
-            <Link href="/" className="brand premiumBrand" onClick={() => setMobileOpen(false)}>
-              <span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span>
-            </Link>
+            <BrandLogo/>
             <button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button>
           </div>
           <nav>
@@ -391,7 +387,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
       <footer className="footer premiumFooter">
         <div className="shell premiumFooterTop">
           <div className="footerBrandBlock">
-            <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
+            <BrandLogo/>
             <p>Phones, laptops, audio, accessories and creator tools.</p>
           </div>
           <div><b>Shop</b><Link href="/shop?category=Phones">Phones</Link><Link href="/shop?category=Laptops">Laptops</Link><Link href="/shop?category=Creator%20Tools">Creator Tools</Link><Link href="/shop">All Products</Link></div>
