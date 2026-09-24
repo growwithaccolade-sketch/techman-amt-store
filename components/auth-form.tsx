@@ -11,6 +11,22 @@ export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" | "forg
   const [state, setState] = useState<"idle"|"loading"|"success"|"error">("idle");
   const [message, setMessage] = useState("");
 
+  async function signInWithGoogle() {
+    setState("loading");
+    setMessage("");
+    try {
+      const supabase = createCustomerBrowserClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/auth/callback?next=/account" },
+      });
+      if (error) throw error;
+    } catch (error) {
+      setState("error");
+      setMessage(error instanceof Error ? error.message : "Google sign-in could not be started.");
+    }
+  }
+
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setState("loading");
@@ -81,6 +97,7 @@ export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" | "forg
     <section className="authCard">
       <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
       <div className="authIntro"><span className="kicker">CUSTOMER ACCOUNT</span><h1>{title}</h1><p>{mode === "sign-in" ? "See your order history and keep account access in one place." : mode === "sign-up" ? "Create an account with email and password. Checkout can still work without an account." : mode === "forgot" ? "Enter your account email to request a secure recovery link." : "Use a strong password you do not reuse elsewhere."}</p></div>
+{(mode === "sign-in" || mode === "sign-up") && <><button type="button" className="oauthButton" onClick={signInWithGoogle}>Continue with Google</button><div className="authDivider"><span>or use email</span></div></>}
       <form className="authForm" onSubmit={submit}>
         {mode === "sign-up" && <label>Full name<input name="fullName" required autoComplete="name"/></label>}
         {mode !== "update" && <label>Email address<input name="email" type="email" required autoComplete="email"/></label>}
