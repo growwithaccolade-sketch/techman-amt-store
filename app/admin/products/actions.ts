@@ -10,6 +10,9 @@ function text(formData: FormData, key: string) {
   return String(formData.get(key) || "").trim();
 }
 
+function parseHighlights(raw: string) { return raw.split("\n").map(v => v.trim()).filter(Boolean); }
+function parseSpecs(raw: string) { const out: Record<string,string> = {}; raw.split("\n").forEach(line => { const i=line.indexOf(":"); if(i>0) out[line.slice(0,i).trim()] = line.slice(i+1).trim(); }); return out; }
+
 function slugify(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
@@ -55,6 +58,8 @@ export async function createProduct(formData: FormData) {
     badge: text(formData, "badge") || null,
     warranty: text(formData, "warranty") || null,
     condition: text(formData, "condition") || "New",
+    highlights: parseHighlights(text(formData, "highlights")),
+    specs: parseSpecs(text(formData, "specs")),
     active: true,
     updated_at: new Date().toISOString(),
   });
@@ -92,6 +97,8 @@ export async function updateProduct(formData: FormData) {
     badge: text(formData, "badge") || null,
     warranty: text(formData, "warranty") || null,
     condition: text(formData, "condition") || "New",
+    highlights: parseHighlights(text(formData, "highlights")),
+    specs: parseSpecs(text(formData, "specs")),
     active: formData.get("active") === "on",
     updated_at: new Date().toISOString(),
   }).eq("id", id);
