@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { BarChart3, Boxes, LayoutDashboard, LogOut, Package, Settings, ShieldCheck, ShoppingCart, Users } from "lucide-react";
-import { hasAdminSession, loginAdmin, logoutAdmin } from "./actions";
+import { ShieldCheck } from "lucide-react";
+import AdminNav from "@/components/admin-nav";
+import { hasAdminSession, loginAdmin } from "./actions";
+import { getAdminMetrics } from "@/lib/admin-data";
+import { money } from "@/lib/products";
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
@@ -13,48 +16,47 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
           <span className="kicker">PRIVATE ADMIN</span>
           <h1>Store control starts here.</h1>
-          <p>This area is intentionally hidden from the storefront navigation.</p>
+          <p>This area is intentionally hidden from public navigation and protected by an HTTP-only server session.</p>
           {error === "invalid" && <div className="adminError">That access key is not valid.</div>}
           {error === "config" && <div className="adminError">ADMIN_ACCESS_KEY is not configured on the server yet.</div>}
           <form action={loginAdmin}><label>Admin access key<input name="accessKey" type="password" required autoComplete="current-password"/></label><button className="primaryAction" type="submit"><ShieldCheck size={18}/> Sign in securely</button></form>
-          <small>For production, this foundation should be upgraded to Supabase Auth with role-based permissions and optional MFA.</small>
+          <small>Before multiple staff members get access, upgrade this single-owner gate to role-based authentication with MFA.</small>
         </div>
       </main>
     );
   }
 
+  const metrics = await getAdminMetrics();
+
   return (
     <main className="adminShell">
-      <aside className="adminSidebar">
-        <Link href="/" className="brand footerBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
-        <nav>
-          <a className="active"><LayoutDashboard size={18}/> Overview</a>
-          <a><Package size={18}/> Products</a>
-          <a><ShoppingCart size={18}/> Orders</a>
-          <a><Boxes size={18}/> Inventory</a>
-          <a><Users size={18}/> Customers</a>
-          <a><BarChart3 size={18}/> Analytics</a>
-          <a><Settings size={18}/> Settings</a>
-        </nav>
-        <form action={logoutAdmin}><button><LogOut size={18}/> Sign out</button></form>
-      </aside>
+      <AdminNav active="overview"/>
       <section className="adminMain">
         <div className="adminTop"><div><span className="kicker">STORE OVERVIEW</span><h1>TechMan AMT Admin</h1></div><Link href="/" className="secondaryAction">View storefront</Link></div>
+        {!metrics.backend && <div className="adminNotice warning">The admin is running in demo fallback mode. Connect Supabase and apply both migrations to turn on live product, order and revenue data.</div>}
         <div className="metricGrid">
-          <article><span>Products</span><strong>8</strong><small>Demo catalog currently loaded</small></article>
-          <article><span>Orders</span><strong>—</strong><small>Connect database to start tracking</small></article>
-          <article><span>Revenue</span><strong>—</strong><small>Appears after payments are connected</small></article>
-          <article><span>Low stock</span><strong>0</strong><small>Inventory engine comes next</small></article>
+          <article><span>Products</span><strong>{metrics.products}</strong><small>{metrics.backend ? "Database catalog" : "Demo catalog fallback"}</small></article>
+          <article><span>Orders</span><strong>{metrics.orders}</strong><small>{metrics.backend ? "All recorded orders" : "Connect database to track orders"}</small></article>
+          <article><span>Paid revenue</span><strong>{metrics.backend ? money(metrics.revenue) : "—"}</strong><small>Verified paid orders only</small></article>
+          <article><span>Low stock</span><strong>{metrics.lowStock}</strong><small>Products with 5 units or fewer</small></article>
         </div>
         <div className="adminPanels">
-          <article><span className="kicker">FOUNDATION STATUS</span><h2>What is live in the codebase</h2><ul><li><CheckItem/>Responsive storefront</li><li><CheckItem/>Persistent browser cart</li><li><CheckItem/>Product detail routes</li><li><CheckItem/>Checkout details flow</li><li><CheckItem/>Environment-based contact settings</li><li><CheckItem/>Protected admin entry point</li></ul></article>
-          <article><span className="kicker">NEXT CONNECTIONS</span><h2>Production services</h2><p>Connect Supabase for products, inventory, customers and orders. Then wire Paystack webhooks for verified payments and order creation.</p><div className="adminSetup"><span>1</span><b>Supabase database + Auth</b></div><div className="adminSetup"><span>2</span><b>Paystack payments + webhook</b></div><div className="adminSetup"><span>3</span><b>Image storage + admin CRUD</b></div></article>
+          <article>
+            <span className="kicker">OPERATIONS</span>
+            <h2>Manage the store from here.</h2>
+            <p>Product changes now feed the live storefront when the database is connected. Checkout validates current price and stock from the same catalog before starting payment.</p>
+            <div className="adminQuickLinks"><Link href="/admin/products">Manage products</Link><Link href="/admin/orders">Manage orders</Link><Link href="/track-order">Test customer tracking</Link></div>
+          </article>
+          <article>
+            <span className="kicker">PRODUCTION CHECKLIST</span>
+            <h2>What still needs credentials</h2>
+            <div className="adminSetup"><span>1</span><b>Apply Supabase migrations 001 and 002</b></div>
+            <div className="adminSetup"><span>2</span><b>Add Supabase and Paystack environment variables</b></div>
+            <div className="adminSetup"><span>3</span><b>Add TechMan AMT WhatsApp number and final domain</b></div>
+            <div className="adminSetup"><span>4</span><b>Run test-mode payment end to end before live keys</b></div>
+          </article>
         </div>
       </section>
     </main>
   );
-}
-
-function CheckItem() {
-  return <span className="adminCheck">✓</span>;
 }
