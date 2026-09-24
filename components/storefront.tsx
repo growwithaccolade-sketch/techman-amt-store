@@ -41,6 +41,20 @@ const categoryMeta = [
 
 const filters = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
 
+const trendingSlugs = [
+  "iphone-18-pro-max-256gb",
+  "iphone-18-pro-256gb",
+  "galaxy-s26-ultra-512gb",
+  "airpods-5",
+  "apple-watch-ultra-4",
+  "iphone-16-pro-max-256gb",
+  "samsung-galaxy-s25-ultra-256gb",
+  "macbook-air-m4-13-inch",
+  "hollyland-lark-m2-wireless-mic",
+];
+
+const priceLabel = (price: number) => price > 0 ? money(price) : "Price on request";
+
 export default function Storefront({ homeContent }: { homeContent?: EditablePage }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
@@ -52,22 +66,32 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
     "Hello TechMan AMT, I need help choosing the right tech product."
   );
 
-  const visibleProducts = useMemo(
-    () =>
-      catalog.filter((product) => {
-        const inCategory = category === "All" || product.category === category;
-        const q = query.toLowerCase().trim();
-        const matches =
-          !q ||
-          `${product.name} ${product.brand} ${product.category} ${product.blurb}`
-            .toLowerCase()
-            .includes(q);
-        return inCategory && matches;
-      }),
-    [catalog, query, category]
-  );
+  const visibleProducts = useMemo(() => {
+    const filtered = catalog.filter((product) => {
+      const inCategory = category === "All" || product.category === category;
+      const q = query.toLowerCase().trim();
+      const matches =
+        !q ||
+        `${product.name} ${product.brand} ${product.category} ${product.blurb}`
+          .toLowerCase()
+          .includes(q);
+      return inCategory && matches;
+    });
 
-  const heroProducts = catalog.slice(0, 3);
+    return [...filtered].sort((a, b) => {
+      const ai = trendingSlugs.indexOf(a.slug);
+      const bi = trendingSlugs.indexOf(b.slug);
+      if (ai !== -1 && bi !== -1) return ai - bi;
+      if (ai !== -1) return -1;
+      if (bi !== -1) return 1;
+      return a.id - b.id;
+    });
+  }, [catalog, query, category]);
+
+  const heroProducts = trendingSlugs
+    .map((slug) => catalog.find((product) => product.slug === slug))
+    .filter(Boolean)
+    .slice(0, 3) as typeof catalog;
   const primaryHero = heroProducts[0];
   const secondaryHero = heroProducts[1];
   const tertiaryHero = heroProducts[2];
@@ -157,12 +181,12 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
         <div className="heroStage">
           {primaryHero && (
             <Link href={`/product/${primaryHero.slug}`} className="heroStageMain">
-              <div className="heroStageBadge">FEATURED</div>
+              <div className="heroStageBadge">NEW 2026</div>
               <ProductImage src={primaryHero.image} alt={primaryHero.name} brand={primaryHero.brand} sizes="(max-width: 900px) 92vw, 46vw" priority/>
               <div className="heroStageOverlay">
                 <span>{primaryHero.brand}</span>
                 <strong>{primaryHero.name}</strong>
-                <b>{money(primaryHero.price)}</b>
+                <b>{priceLabel(primaryHero.price)}</b>
               </div>
             </Link>
           )}
@@ -185,7 +209,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
       </section>
 
       <section className="brandRail shell" aria-label="Popular brands">
-        <span>APPLE</span><span>SAMSUNG</span><span>ANKER</span><span>SONY</span><span>LOGITECH</span><span>HOLLYLAND</span><span>JBL</span>
+        <span>APPLE</span><span>SAMSUNG</span><span>GOOGLE</span><span>SONY</span><span>DJI</span><span>NINTENDO</span><span>ANKER</span>
       </section>
 
       <section id="collections" className="collectionSection shell">
@@ -230,7 +254,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
               <Link href={`/product/${product.slug}`} className="dealFeatureItem" key={product.id}>
                 <span>0{index + 1}</span>
                 <div className="dealFeatureMedia"><ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="150px"/></div>
-                <div><small>{product.brand}</small><strong>{product.name}</strong><b>{money(product.price)}</b></div>
+                <div><small>{product.brand}</small><strong>{product.name}</strong><b>{priceLabel(product.price)}</b></div>
                 <ArrowUpRight size={18}/>
               </Link>
             ))}
@@ -240,7 +264,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
 
       <section id="featured" className="featuredSection shell">
         <div className="premiumSectionHead featuredHead">
-          <div><span className="kicker">PRODUCTS</span><h2>Current stock.</h2></div>
+          <div><span className="kicker">NEW & TRENDING 2026</span><h2>Latest launches and current bestsellers.</h2></div>
           <div className="featuredSearch">
             <Search size={17}/>
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search the collection"/>
@@ -277,21 +301,27 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
                   <Link href={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
                   <p>{product.blurb}</p>
                   <div className="premiumPriceLine">
-                    <strong>{money(product.price)}</strong>
+                    <strong>{priceLabel(product.price)}</strong>
                     {product.oldPrice && <del>{money(product.oldPrice)}</del>}
                   </div>
-                  <div className={product.stock > 0 ? "premiumStock" : "premiumStock out"}>
-                    {product.stock > 0 ? `${product.stock} available` : "Out of stock"}
+                  <div className={product.price <= 0 ? "premiumStock request" : product.stock > 0 ? "premiumStock" : "premiumStock out"}>
+                    {product.price <= 0 ? "Availability on request" : product.stock > 0 ? `${product.stock} available` : "Out of stock"}
                   </div>
                   <div className="premiumCardActions">
-                    <button
-                      className={`premiumAddButton ${inCart ? "added" : ""}`}
-                      onClick={() => addItem(product.id)}
-                      disabled={product.stock <= 0}
-                    >
-                      <ShoppingBag size={16}/>
-                      {product.stock <= 0 ? "Out of stock" : inCart ? "Add another" : "Add to cart"}
-                    </button>
+                    {product.price <= 0 ? (
+                      <Link className="premiumAddButton requestButton" href={`/device-request?product=${encodeURIComponent(product.name)}`}>
+                        Request price
+                      </Link>
+                    ) : (
+                      <button
+                        className={`premiumAddButton ${inCart ? "added" : ""}`}
+                        onClick={() => addItem(product.id)}
+                        disabled={product.stock <= 0}
+                      >
+                        <ShoppingBag size={16}/>
+                        {product.stock <= 0 ? "Out of stock" : inCart ? "Add another" : "Add to cart"}
+                      </button>
+                    )}
                     <Link className="premiumDetailButton" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}><ArrowUpRight size={18}/></Link>
                   </div>
                 </div>
