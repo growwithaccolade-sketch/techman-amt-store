@@ -26,10 +26,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
           <p className="adminMuted">These values appear in announcements, WhatsApp actions, contact information and delivery messaging. Keep them accurate because customers use them to make purchase decisions.</p>
           <form className="adminForm" action={updateStoreSettings}>
             <label>Announcement bar<input name="announcementText" defaultValue={settings.announcementText} maxLength={120}/></label>
-            <div className="fieldGrid">
-              <label>Support email<input name="supportEmail" type="email" defaultValue={settings.supportEmail}/></label>
-              <label>WhatsApp number<input name="whatsappNumber" inputMode="tel" defaultValue={settings.whatsappNumber} placeholder="2348012345678"/></label>
-            </div>
+            <div className="fieldGrid"><label>Support email<input name="supportEmail" type="email" defaultValue={settings.supportEmail}/></label><label>WhatsApp number<input name="whatsappNumber" inputMode="tel" defaultValue={settings.whatsappNumber} placeholder="2348012345678"/></label></div><label>Public location<input name="locationLabel" defaultValue={settings.locationLabel} placeholder="Lagos, Nigeria"/></label><div className="fieldGrid"><label>Footer credit label<input name="footerCreditLabel" defaultValue={settings.footerCreditLabel}/></label><label>Footer credit URL<input name="footerCreditUrl" type="url" defaultValue={settings.footerCreditUrl}/></label></div>
             <label>Free delivery threshold in ₦<input name="freeDeliveryThreshold" type="number" min="0" step="1" defaultValue={settings.freeDeliveryThreshold ?? ""} placeholder="Leave blank if not running this offer"/></label>
             <button className="primaryAction" type="submit" disabled={!backend}>Save public settings</button>
           </form>
