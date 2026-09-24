@@ -52,7 +52,7 @@ export default function OrderTracking({ initialReference = "" }: { initialRefere
 
   return (
     <section className="trackingPage shell">
-      <div className="pageIntro"><span className="kicker">ORDER TRACKING</span><h1>Know where your order stands.</h1><p>Use the same email address you entered at checkout together with your order reference.</p></div>
+      <div className="pageIntro"><span className="kicker">ORDER TRACKING</span><h1>Track your order.</h1><p>Enter the order reference and checkout email.</p></div>
       <div className="trackingLayout">
         <form className="trackingForm" onSubmit={submit}>
           <label>Order reference<input name="reference" defaultValue={initialReference} placeholder="TAMT-..." required/></label>
@@ -61,7 +61,7 @@ export default function OrderTracking({ initialReference = "" }: { initialRefere
           {error && <div className="checkoutError">{error}</div>}
         </form>
         <div className="trackingResult">
-          {!order ? <div className="trackingEmpty"><PackageSearch size={38}/><h2>Your order status will appear here.</h2><p>Tracking details are private and require both the reference and checkout email.</p></div> : <>
+          {!order ? <div className="trackingEmpty"><PackageSearch size={38}/><h2>Order status</h2><p>Enter your details to view tracking information.</p></div> : <>
             <div className="trackingTop"><div><span className="kicker">REFERENCE</span><h2>{order.reference}</h2></div><strong>{money(Number(order.total_ngn))}</strong></div>
             <div className="statusPills"><span>Order: <b>{order.status}</b></span><span>Payment: <b>{order.payment_status}</b></span></div>
             <div className="timeline">{stages.map((stage, index) => <div className={index <= activeIndex ? "done" : ""} key={stage}><span>{index <= activeIndex && <Check size={13}/>}</span><b>{stage}</b></div>)}</div>
