@@ -26,7 +26,7 @@ import {
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
 import { makeWhatsappUrl } from "@/lib/site";
-import NewsletterForm from "@/components/newsletter-form";
+import NewsletterForm from "@/components/newsletter-form";\nimport ProductImage from "@/components/product-image";
 
 const categoryMeta = [
   { name: "Phones", copy: "Flagships, everyday performers and camera-first picks.", icon: Smartphone },
@@ -75,8 +75,8 @@ export default function Storefront() {
   return (
     <main className="siteFrame">
       <div className="announcement premiumAnnouncement">
-        <span>{settings.announcementText || "Better tech. Smarter upgrades."}</span>
-        <span className="announcementDesktop">Nationwide delivery · Secure checkout · Human support</span>
+        <span>{settings.announcementText || "Phones, laptops, audio and creator tools"}</span>
+        <span className="announcementDesktop">Nationwide delivery · Secure payment · Human support</span>
       </div>
 
       <header className="nav shell premiumNav">
@@ -140,18 +140,18 @@ export default function Storefront() {
 
       <section className="premiumHero shell">
         <div className="premiumHeroCopy">
-          <div className="heroOverline"><Sparkles size={14}/> CURATED TECH FOR REAL LIFE</div>
-          <h1>Better tech.<br/><span>Less guesswork.</span></h1>
+          <div className="heroOverline">TECHMAN AMT</div>
+          <h1>Technology,<br/><span>properly selected.</span></h1>
           <p>
             Phones, laptops, creator gear and everyday gadgets selected around
             how you actually work, create and live.
           </p>
           <div className="premiumHeroCtas">
-            <Link className="primaryBtn heroPrimary" href="/shop">Shop the collection <ArrowRight size={17}/></Link>
-            <Link className="textCta" href="/device-request">Can’t find it? Request it <ArrowUpRight size={16}/></Link>
+            <Link className="primaryBtn heroPrimary" href="/shop">Shop products <ArrowRight size={17}/></Link>
+            <Link className="textCta" href="/device-request">Request a device <ArrowUpRight size={16}/></Link>
           </div>
           <div className="heroProof">
-            <span><BadgeCheck size={16}/> Clear condition & warranty</span>
+            <span><BadgeCheck size={16}/> Condition and warranty shown</span>
             <span><Truck size={16}/> Delivery across Nigeria</span>
             <span><ShieldCheck size={16}/> Secure checkout</span>
           </div>
@@ -161,7 +161,7 @@ export default function Storefront() {
           {primaryHero && (
             <Link href={`/product/${primaryHero.slug}`} className="heroStageMain">
               <div className="heroStageBadge">FEATURED</div>
-              <Image src={primaryHero.image} alt={primaryHero.name} fill sizes="(max-width: 900px) 92vw, 46vw" priority unoptimized/>
+              <ProductImage src={primaryHero.image} alt={primaryHero.name} brand={primaryHero.brand} sizes="(max-width: 900px) 92vw, 46vw" priority/>
               <div className="heroStageOverlay">
                 <span>{primaryHero.brand}</span>
                 <strong>{primaryHero.name}</strong>
@@ -173,13 +173,13 @@ export default function Storefront() {
           <div className="heroStageRail">
             {secondaryHero && (
               <Link href={`/product/${secondaryHero.slug}`} className="heroMiniCard">
-                <Image src={secondaryHero.image} alt={secondaryHero.name} fill sizes="220px" unoptimized/>
+                <ProductImage src={secondaryHero.image} alt={secondaryHero.name} brand={secondaryHero.brand} sizes="220px"/>
                 <div><span>{secondaryHero.category}</span><strong>{secondaryHero.name}</strong></div>
               </Link>
             )}
             {tertiaryHero && (
               <Link href={`/product/${tertiaryHero.slug}`} className="heroMiniCard">
-                <Image src={tertiaryHero.image} alt={tertiaryHero.name} fill sizes="220px" unoptimized/>
+                <ProductImage src={tertiaryHero.image} alt={tertiaryHero.name} brand={tertiaryHero.brand} sizes="220px"/>
                 <div><span>{tertiaryHero.category}</span><strong>{tertiaryHero.name}</strong></div>
               </Link>
             )}
@@ -193,7 +193,7 @@ export default function Storefront() {
 
       <section id="collections" className="collectionSection shell">
         <div className="premiumSectionHead">
-          <div><span className="kicker">SHOP BY NEED</span><h2>Start with what you’re trying to do.</h2></div>
+          <div><span className="kicker">CATEGORIES</span><h2>Find the right category quickly.</h2></div>
           <Link href="/shop" className="sectionLink">View all products <ArrowUpRight size={16}/></Link>
         </div>
 
@@ -212,7 +212,7 @@ export default function Storefront() {
                   <h3>{item.name}</h3>
                   <p>{item.copy}</p>
                 </div>
-                {product && <Image src={product.image} alt="" fill sizes="(max-width: 760px) 94vw, 33vw" unoptimized/>}
+                {product && <ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="(max-width: 760px) 94vw, 33vw"/>}
                 <ArrowUpRight className="collectionArrow" size={20}/>
               </Link>
             );
@@ -229,13 +229,13 @@ export default function Storefront() {
               Start with the main device, then add only the accessories that
               improve how you work, create or travel.
             </p>
-            <Link href="/shop" className="lightBtn">Build your setup <ArrowRight size={17}/></Link>
+            <Link href="/shop" className="lightBtn">Browse accessories <ArrowRight size={17}/></Link>
           </div>
           <div className="dealFeatureStack">
             {catalog.slice(2, 5).map((product, index) => (
               <Link href={`/product/${product.slug}`} className="dealFeatureItem" key={product.id}>
                 <span>0{index + 1}</span>
-                <Image src={product.image} alt={product.name} width={180} height={140} unoptimized/>
+                <div className="dealFeatureMedia"><ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="150px"/></div>
                 <div><small>{product.brand}</small><strong>{product.name}</strong><b>{money(product.price)}</b></div>
                 <ArrowUpRight size={18}/>
               </Link>
@@ -246,7 +246,7 @@ export default function Storefront() {
 
       <section id="featured" className="featuredSection shell">
         <div className="premiumSectionHead featuredHead">
-          <div><span className="kicker">FEATURED NOW</span><h2>Good tech. Clearly presented.</h2></div>
+          <div><span className="kicker">PRODUCTS</span><h2>Current stock.</h2></div>
           <div className="featuredSearch">
             <Search size={17}/>
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search the collection"/>
@@ -274,7 +274,7 @@ export default function Storefront() {
                     <Heart size={17} fill={wishlist.includes(product.id) ? "currentColor" : "none"}/>
                   </button>
                   <Link href={`/product/${product.slug}`}>
-                    <Image src={product.image} alt={product.name} fill sizes="(max-width: 720px) 92vw, (max-width: 1100px) 46vw, 31vw" unoptimized/>
+                    <ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="(max-width: 720px) 92vw, (max-width: 1100px) 46vw, 31vw"/>
                   </Link>
                 </div>
 
@@ -314,16 +314,16 @@ export default function Storefront() {
       <section className="whySection shell">
         <div className="whyLead">
           <span className="kicker">WHY TECHMAN AMT</span>
-          <h2>A store designed to reduce buyer’s remorse.</h2>
+          <h2>The important details are visible before checkout.</h2>
           <p>
             Clear product condition, useful context, delivery transparency and
             real support before you spend.
           </p>
         </div>
         <div className="whyGrid">
-          <article><span>01</span><ShieldCheck/><h3>Know what you’re buying</h3><p>Condition, warranty and key product details are shown before checkout.</p></article>
-          <article><span>02</span><Truck/><h3>Delivery without surprises</h3><p>Delivery is calculated before online payment where pricing is configured.</p></article>
-          <article><span>03</span><BadgeCheck/><h3>Useful proof, not fake hype</h3><p>Verified-purchase reviews only appear after a paid order is matched.</p></article>
+          <article><span>01</span><ShieldCheck/><h3>Product details</h3><p>Condition, warranty and key specifications are shown on the product page.</p></article>
+          <article><span>02</span><Truck/><h3>Delivery pricing</h3><p>Delivery is calculated before online payment where a rate is configured.</p></article>
+          <article><span>03</span><BadgeCheck/><h3>Verified reviews</h3><p>Verified purchase reviews are tied to paid orders before publication.</p></article>
         </div>
       </section>
 
@@ -348,7 +348,7 @@ export default function Storefront() {
 
       <section className="insights premiumInsights shell">
         <div className="premiumSectionHead">
-          <div><span className="kicker">TECHMAN INSIGHTS</span><h2>Buy with context.</h2></div>
+          <div><span className="kicker">BUYING GUIDES</span><h2>Useful product guides.</h2></div>
           <Link href="/blog" className="sectionLink">See all guides <ArrowUpRight size={16}/></Link>
         </div>
 
@@ -383,18 +383,18 @@ export default function Storefront() {
         <div className="shell premiumFooterTop">
           <div className="footerBrandBlock">
             <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
-            <p>Phones, gadgets and creator tech chosen for how people actually work, create and live.</p>
+            <p>Phones, laptops, audio, accessories and creator tools.</p>
           </div>
           <div><b>Shop</b><Link href="/shop?category=Phones">Phones</Link><Link href="/shop?category=Laptops">Laptops</Link><Link href="/shop?category=Creator%20Tools">Creator Tools</Link><Link href="/shop">All Products</Link></div>
           <div><b>Help</b><Link href="/track-order">Track order</Link><Link href="/delivery">Delivery</Link><Link href="/returns">Returns</Link><Link href="/warranty">Warranty</Link></div>
           <div><b>Company</b><Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/trade-in">Trade In</Link><Link href="/corporate">Bulk Orders</Link></div>
           <div><b>Support</b>{supportLink ? <a className="whatsappLink" href={supportLink} target="_blank" rel="noreferrer">WhatsApp support</a> : <span>WhatsApp being configured</span>}<Link href="/faq">FAQs</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div>
         </div>
-        <div className="shell copyright premiumCopyright"><span>© 2026 TechMan AMT</span><span>Built for clarity, trust and better buying decisions.</span></div>
+        <div className="shell copyright premiumCopyright"><span>© 2026 TechMan AMT</span><span>Phones, laptops, audio and creator tools.</span></div>
       </footer>
 
       <nav className="mobileDock" aria-label="Mobile navigation">
-        <Link href="/"><span className="dockIcon"><Sparkles size={18}/></span><small>Home</small></Link>
+        <Link href="/"><span className="dockIcon"><Home size={18}/></span><small>Home</small></Link>
         <Link href="/shop"><span className="dockIcon"><Search size={18}/></span><small>Shop</small></Link>
         <Link href="/wishlist" className="dockBadge"><span className="dockIcon"><Heart size={18}/></span><small>Saved</small>{wishlist.length > 0 && <em>{wishlist.length}</em>}</Link>
         <Link href="/cart" className="dockBadge"><span className="dockIcon"><ShoppingBag size={18}/></span><small>Cart</small>{totalItems > 0 && <em>{totalItems}</em>}</Link>
