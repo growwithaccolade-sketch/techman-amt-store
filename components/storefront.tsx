@@ -13,6 +13,7 @@ import {
   Laptop,
   Menu,
   Mic2,
+  MessageCircle,
   Search,
   ShieldCheck,
   ShoppingBag,
@@ -87,11 +88,11 @@ export default function Storefront() {
         </Link>
 
         <nav className="desktopNav premiumDesktopNav">
+          <Link href="/">Home</Link>
           <Link href="/shop">Shop</Link>
           <a href="#collections">Collections</a>
-          <a href="#featured">Featured</a>
           <Link href="/blog">Guides</Link>
-          <Link href="/corporate">Bulk Orders</Link>
+          <Link href="/contact">Contact</Link>
         </nav>
 
         <div className="navActions premiumNavActions">
@@ -125,11 +126,11 @@ export default function Storefront() {
             <button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button>
           </div>
           <nav>
+            <Link href="/" onClick={() => setMobileOpen(false)}>Home <ArrowUpRight/></Link>
             <Link href="/shop" onClick={() => setMobileOpen(false)}>Shop <ArrowUpRight/></Link>
             <a href="#collections" onClick={() => setMobileOpen(false)}>Collections <ArrowUpRight/></a>
-            <Link href="/blog" onClick={() => setMobileOpen(false)}>Buying Guides <ArrowUpRight/></Link>
-            <Link href="/trade-in" onClick={() => setMobileOpen(false)}>Trade In <ArrowUpRight/></Link>
-            <Link href="/corporate" onClick={() => setMobileOpen(false)}>Bulk Orders <ArrowUpRight/></Link>
+            <Link href="/blog" onClick={() => setMobileOpen(false)}>Guides <ArrowUpRight/></Link>
+            <Link href="/contact" onClick={() => setMobileOpen(false)}>Contact <ArrowUpRight/></Link>
           </nav>
           <div className="mobileMenuUtilities">
             <Link href="/account" onClick={() => setMobileOpen(false)}>Account</Link>
@@ -369,6 +370,19 @@ export default function Storefront() {
         </div>
       </section>
 
+      <section className="homeContactBand shell">
+        <div className="homeContactCopy">
+          <span className="kicker">CONTACT</span>
+          <h2>Need a product check or order help?</h2>
+          <p>Contact TechMan AMT for stock, compatibility, delivery and order questions.</p>
+        </div>
+        <div className="homeContactActions">
+          <Link className="contactPrimary" href="/contact">Contact us <ArrowRight size={17}/></Link>
+          {supportLink && <a className="contactSecondary" href={supportLink} target="_blank" rel="noreferrer"><MessageCircle size={17}/> WhatsApp</a>}
+          <Link className="contactSecondary" href="/track-order">Track order</Link>
+        </div>
+      </section>
+
       <section className="newsletter premiumNewsletter">
         <div className="shell premiumNewsletterInner">
           <div>
@@ -397,7 +411,7 @@ export default function Storefront() {
       <nav className="mobileDock" aria-label="Mobile navigation">
         <Link href="/"><span className="dockIcon"><Home size={18}/></span><small>Home</small></Link>
         <Link href="/shop"><span className="dockIcon"><Search size={18}/></span><small>Shop</small></Link>
-        <Link href="/wishlist" className="dockBadge"><span className="dockIcon"><Heart size={18}/></span><small>Saved</small>{wishlist.length > 0 && <em>{wishlist.length}</em>}</Link>
+        <Link href="/contact"><span className="dockIcon"><MessageCircle size={18}/></span><small>Contact</small></Link>
         <Link href="/cart" className="dockBadge"><span className="dockIcon"><ShoppingBag size={18}/></span><small>Cart</small>{totalItems > 0 && <em>{totalItems}</em>}</Link>
       </nav>
 
