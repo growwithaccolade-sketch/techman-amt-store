@@ -16,7 +16,12 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "s.topratgeber24.de" },
       { protocol: "https", hostname: "www.static-src.com" },
       { protocol: "https", hostname: "computermania.co.za" },
-      { protocol: "https", hostname: "cdn.panacompu.com" }
+      { protocol: "https", hostname: "cdn.panacompu.com" },
+      { protocol: "https", hostname: "www.apple.com" },
+      { protocol: "https", hostname: "image-us.samsung.com" },
+      { protocol: "https", hostname: "store.google.com" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "www-cdn.djiits.com" }
     ]
   }
 };
