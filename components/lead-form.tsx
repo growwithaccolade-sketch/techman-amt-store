@@ -36,7 +36,7 @@ export default function LeadForm({ type, fields, submitLabel }: { type: "trade_i
       }
       e.currentTarget.reset();
       setState("success");
-      setMessage("Request received. TechMan AMT can now review the details and follow up.");
+      setMessage("Request received. We will follow up using the details provided.");
     } catch {
       setState("error");
       setMessage("The request service is temporarily unavailable.");
