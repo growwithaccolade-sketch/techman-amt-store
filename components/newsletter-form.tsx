@@ -28,12 +28,12 @@ export default function NewsletterForm() {
       }
       form.reset();
       setState("success");
-      setMessage("You're on the TechMan AMT list.");
+      setMessage("Subscription confirmed.");
     } catch {
       setState("error");
       setMessage("Newsletter signup is temporarily unavailable.");
     }
   }
 
-  return <div className="newsletterFormWrap"><form onSubmit={submit}><input name="email" type="email" required placeholder="Your email address"/><button disabled={state === "sending"}>{state === "sending" ? "Joining..." : "Join TechMan AMT"} {state !== "sending" && <ArrowRight size={17}/>}</button></form>{state === "success" && <span className="newsletterStatus success"><Check size={14}/>{message}</span>}{state === "error" && <span className="newsletterStatus error">{message}</span>}</div>;
+  return <div className="newsletterFormWrap"><form onSubmit={submit}><input name="email" type="email" required placeholder="Your email address"/><button disabled={state === "sending"}>{state === "sending" ? "Joining..." : "Subscribe"} {state !== "sending" && <ArrowRight size={17}/>}</button></form>{state === "success" && <span className="newsletterStatus success"><Check size={14}/>{message}</span>}{state === "error" && <span className="newsletterStatus error">{message}</span>}</div>;
 }
