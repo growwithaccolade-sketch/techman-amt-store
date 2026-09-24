@@ -4,7 +4,7 @@ import { getStoreCatalog } from "@/lib/catalog";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_SITE_URL || "https://techmanamt.example";
   const catalog = await getStoreCatalog();
-  const staticRoutes = ["", "/about", "/contact", "/delivery", "/returns", "/warranty", "/faq", "/track-order", "/privacy", "/terms", "/refund-policy"];
+  const staticRoutes = ["", "/shop", "/about", "/contact", "/delivery", "/returns", "/warranty", "/faq", "/track-order", "/trade-in", "/device-request", "/corporate", "/privacy", "/terms", "/refund-policy"];
 
   return [
     ...staticRoutes.map((path) => ({ url: `${base}${path}`, changeFrequency: path === "" ? "daily" as const : "monthly" as const, priority: path === "" ? 1 : .5 })),
