@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { validPaystackWebhook } from "@/lib/paystack";
+import { sendPaidOrderConfirmation } from "@/lib/order-email";
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
         p_reference: event.data.reference,
         p_transaction_id: event.data.id ?? null,
       });
+      await sendPaidOrderConfirmation(event.data.reference);
     }
   }
 
