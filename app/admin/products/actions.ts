@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { hasAdminSession } from "@/app/admin/actions";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
+import { uploadProductImage } from "@/lib/product-images";
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) || "").trim();
@@ -26,6 +27,12 @@ export async function createProduct(formData: FormData) {
   const price = Number(text(formData, "price"));
   const stock = Number(text(formData, "stock"));
   const oldPriceRaw = text(formData, "oldPrice");
+  let imageUrl = text(formData, "image");
+  const imageFile = formData.get("imageFile");
+  if (imageFile instanceof File && imageFile.size > 0) {
+    try { imageUrl = await uploadProductImage(imageFile); }
+    catch (error) { redirect(`/admin/products?error=${encodeURIComponent(error instanceof Error ? error.message : "Image upload failed")}`); }
+  }
 
   if (!name || !slug || !Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
     redirect("/admin/products?error=invalid");
@@ -43,7 +50,7 @@ export async function createProduct(formData: FormData) {
     price_ngn: Math.round(price),
     old_price_ngn: oldPriceRaw ? Math.round(Number(oldPriceRaw)) : null,
     stock,
-    image_url: text(formData, "image"),
+    image_url: imageUrl,
     blurb: text(formData, "blurb"),
     badge: text(formData, "badge") || null,
     warranty: text(formData, "warranty") || null,
@@ -66,6 +73,12 @@ export async function updateProduct(formData: FormData) {
   const price = Number(text(formData, "price"));
   const stock = Number(text(formData, "stock"));
   const oldPriceRaw = text(formData, "oldPrice");
+  let imageUrl = text(formData, "image");
+  const imageFile = formData.get("imageFile");
+  if (imageFile instanceof File && imageFile.size > 0) {
+    try { imageUrl = await uploadProductImage(imageFile); }
+    catch (error) { redirect(`/admin/products?error=${encodeURIComponent(error instanceof Error ? error.message : "Image upload failed")}`); }
+  }
 
   const { error } = await supabase.from("products").update({
     name: text(formData, "name"),
@@ -74,7 +87,7 @@ export async function updateProduct(formData: FormData) {
     price_ngn: Math.round(price),
     old_price_ngn: oldPriceRaw ? Math.round(Number(oldPriceRaw)) : null,
     stock,
-    image_url: text(formData, "image"),
+    image_url: imageUrl,
     blurb: text(formData, "blurb"),
     badge: text(formData, "badge") || null,
     warranty: text(formData, "warranty") || null,
