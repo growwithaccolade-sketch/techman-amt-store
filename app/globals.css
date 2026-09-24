@@ -1502,3 +1502,100 @@ body{
   .productActions .buyNowAction,
   .productActions .whatsappAction{grid-column:auto}
 }
+
+/* Premium catalog details */
+.premiumCatalogHero .kicker{color:#777c85}
+.premiumCatalogControls .catalogSearch{display:flex;flex-direction:column;gap:6px}
+.premiumCatalogControls .catalogSearch>span{
+  font-size:8px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:800;
+  color:#666;
+}
+.premiumCatalogControls .catalogSearch>div{
+  height:42px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid #dcddd8;
+  border-radius:10px;
+  padding:0 10px;
+  background:#fbfbf8;
+}
+.premiumCatalogControls .catalogSearch>div input{
+  height:auto;
+  border:0;
+  padding:0;
+  background:transparent;
+}
+.premiumCatalogMeta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+.premiumCatalogMeta button{
+  border:0;
+  background:transparent;
+  font-size:9px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+.premiumStock{
+  margin:-5px 0 14px;
+  color:#267343;
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.premiumStock.out{color:#a23d32}
+
+/* Mobile product conversion bar */
+.mobilePurchaseBar{display:none}
+@media(max-width:760px){
+  .mobilePurchaseBar{
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    z-index:60;
+    height:66px;
+    padding:8px 8px 8px 14px;
+    border-radius:19px;
+    background:rgba(10,12,17,.96);
+    color:#fff;
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.11);
+    box-shadow:0 15px 45px rgba(0,0,0,.3);
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+    align-items:center;
+  }
+  .mobilePurchaseBar>div{display:flex;flex-direction:column;gap:2px}
+  .mobilePurchaseBar span{
+    color:#8e96a4;
+    font-size:8px;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+  }
+  .mobilePurchaseBar strong{font-size:14px}
+  .mobilePurchaseBar button{
+    height:48px;
+    min-width:132px;
+    padding:0 18px;
+    border:0;
+    border-radius:13px;
+    background:var(--premium-blue);
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+  }
+  .productPage{padding-bottom:105px}
+}
