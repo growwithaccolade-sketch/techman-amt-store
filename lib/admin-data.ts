@@ -50,7 +50,7 @@ export async function getAdminOrders() {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("orders")
-    .select("id,reference,email,customer_name,phone,city,state,total_ngn,status,payment_status,admin_note,created_at,order_items(product_name,quantity)")
+    .select("id,reference,email,customer_name,phone,city,state,subtotal_ngn,discount_ngn,coupon_code,delivery_fee_ngn,total_ngn,status,payment_status,admin_note,created_at,order_items(product_name,quantity)")
     .order("created_at", { ascending: false })
     .limit(100);
   if (error) throw new Error(error.message);
