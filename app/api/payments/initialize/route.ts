@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
-import { products } from "@/lib/products";
+import { getStoreProductsByIds } from "@/lib/catalog";
+import type { Product } from "@/lib/products";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
 import { initializePaystackTransaction } from "@/lib/paystack";
 
@@ -25,18 +26,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Complete your contact, delivery and cart details." }, { status: 400 });
   }
 
+  const requestedIds = body.items.map((line) => Number(line.id));
+  const catalogProducts = await getStoreProductsByIds(requestedIds);
   const resolved = body.items.map((line) => {
-    const product = products.find((item) => item.id === Number(line.id));
+    const product = catalogProducts.find((item) => item.id === Number(line.id));
     const qty = Number(line.qty);
-    if (!product || !Number.isInteger(qty) || qty < 1 || qty > 10) return null;
+    if (!product || !Number.isInteger(qty) || qty < 1 || qty > 10 || qty > product.stock) return null;
     return { product, qty };
   });
 
   if (resolved.some((item) => !item)) {
-    return NextResponse.json({ error: "Your cart contains an invalid item or quantity." }, { status: 400 });
+    return NextResponse.json({ error: "Your cart contains an unavailable item, invalid quantity, or insufficient stock." }, { status: 400 });
   }
 
-  const lines = resolved.filter(Boolean) as Array<{ product: (typeof products)[number]; qty: number }>;
+  const lines = resolved.filter(Boolean) as Array<{ product: Product; qty: number }>;
   const subtotal = lines.reduce((sum, line) => sum + line.product.price * line.qty, 0);
   const reference = `TAMT-${Date.now()}-${randomUUID().slice(0, 8)}`;
   const supabase = getSupabaseAdmin();
