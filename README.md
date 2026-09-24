@@ -4,6 +4,16 @@ Premium Next.js ecommerce foundation for phones, laptops, gadgets, creator tools
 
 ## What is implemented
 
+- Customer email/password accounts with Supabase SSR auth
+- Optional Google OAuth through Supabase
+- Password recovery and protected account/order-history area
+- Server-validated coupons and promotion management
+- Verified-purchase review submission and admin moderation
+- Sales analytics, customer value and marketing operations dashboards
+- Admin-managed Nigeria delivery pricing with checkout quoting
+- Supabase Storage product image uploads
+- Transactional paid-order and fulfilment status email support through Resend
+
 - Live Supabase-backed catalog with demo fallback
 - Admin product CRUD, stock control and visibility toggles
 - Admin order fulfilment and internal notes
@@ -61,6 +71,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
 PAYSTACK_SECRET_KEY=
+
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=
+
 ADMIN_ACCESS_KEY=
 ```
 
@@ -76,11 +90,18 @@ supabase/migrations/002_admin_catalog.sql
 supabase/migrations/003_idempotent_inventory.sql
 supabase/migrations/004_store_settings.sql
 supabase/migrations/005_sales_leads.sql
+supabase/migrations/006_newsletter.sql
+supabase/migrations/007_promotions.sql
+supabase/migrations/008_verified_reviews.sql
+supabase/migrations/009_customer_accounts.sql
+supabase/migrations/010_product_image_storage.sql
+supabase/migrations/011_delivery_zones.sql
+supabase/migrations/012_order_notifications.sql
 ```
 
 in the Supabase SQL editor or through your migration workflow.
 
-The migrations create the product catalog, orders, order items, inventory movements, editable store settings and sales lead inbox. Migration 003 also adds idempotent paid-order inventory handling so repeated payment callbacks cannot double-decrement stock.
+The migrations create the product catalog, orders, inventory movements, store settings, sales leads, newsletter subscribers, coupons, verified reviews, customer profiles, product image storage, delivery zones and notification state. Paid-order inventory and coupon usage are idempotent so repeated payment callbacks do not double-consume stock or promotion usage.
 
 RLS is enabled. Public clients only receive read access to active products. Order and inventory access is intentionally kept server-side.
 
@@ -141,3 +162,8 @@ The project is structured for Vercel. Import this GitHub repository into Vercel,
 6. Replace demo catalog data with verified inventory and specifications.
 7. Upgrade staff authentication to Supabase Auth before giving multiple staff members admin access.
 8. Optionally run `supabase/seed.sql` to load the starter catalog into a new database.
+9. Enable email/password Auth in Supabase and configure Google OAuth only if you want Google login.
+10. Add your production site URL to Supabase Auth redirect URLs.
+11. Create and verify the sending domain in Resend before setting `RESEND_FROM_EMAIL`.
+12. Configure delivery zones in `/admin/delivery` before relying on online delivery totals.
+13. Test coupons, delivery, webhook inventory, email and account recovery using test-mode payments before switching Paystack to live keys.
