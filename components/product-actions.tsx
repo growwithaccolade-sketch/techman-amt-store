@@ -32,6 +32,10 @@ export default function ProductActions({ id, name, price }: { id: number; name: 
       <button className="buyNowAction" type="button" onClick={handleBuyNow}>Buy now</button><Link className="secondaryAction" href="/cart">View cart</Link><button className="secondaryAction" type="button" onClick={() => toggleWishlist(id)}><Heart size={18} fill={wishlist.includes(id) ? "currentColor" : "none"}/>{wishlist.includes(id) ? "Saved" : "Save for later"}</button>
       <button className="secondaryAction" type="button" onClick={() => toggleCompare(id)}><Scale size={18}/>{compare.includes(id) ? "Remove compare" : "Compare"}</button>
       {wa && <a className="whatsappAction" href={wa} target="_blank" rel="noreferrer"><MessageCircle size={18}/> Ask on WhatsApp</a>}
+      <div className="mobilePurchaseBar">
+        <div><span>Price</span><strong>{price}</strong></div>
+        <button type="button" onClick={handleBuyNow}>Buy now</button>
+      </div>
     </div>
   );
 }
