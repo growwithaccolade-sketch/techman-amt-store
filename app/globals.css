@@ -1652,3 +1652,34 @@ body{
   .premiumProductBody{padding:16px}
   .premiumFooterTop{gap:28px 18px}
 }
+
+/* Final mobile safe-area and overflow hardening */
+html,body{max-width:100%;overflow-x:hidden}
+img,svg{max-width:100%}
+@media(max-width:760px){
+  body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+  .mobileDock{bottom:calc(10px + env(safe-area-inset-bottom))}
+  .mobilePurchaseBar{bottom:calc(10px + env(safe-area-inset-bottom))}
+  .premiumMobileMenu{
+    padding-top:calc(24px + env(safe-area-inset-top));
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
+  }
+}
+@media(max-width:390px){
+  .premiumHero h1{font-size:48px}
+  .premiumHeroCopy>p{font-size:13px}
+  .heroStageMain{min-height:385px}
+  .heroMiniCard{min-height:150px}
+  .collectionTileCopy{left:18px;right:42px;bottom:18px}
+  .collectionTileCopy h3{font-size:29px}
+  .premiumProductBody h3{min-height:0}
+  .premiumNewsletter h2{font-size:42px}
+}
+@media(max-width:360px){
+  .shell{width:calc(100% - 18px)}
+  .premiumBrand{font-size:11px}
+  .premiumHero h1{font-size:44px}
+  .heroStageMain{min-height:355px}
+  .heroStageOverlay strong{font-size:15px}
+  .mobileDock{left:7px;right:7px}
+}
