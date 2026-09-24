@@ -10,18 +10,31 @@ export async function POST(request: Request) {
     return new NextResponse("Invalid signature", { status: 401 });
   }
 
-  const event = JSON.parse(rawBody) as { event?: string; data?: { id?: number; status?: string; reference?: string; amount?: number; currency?: string } };
+  const event = JSON.parse(rawBody) as {
+    event?: string;
+    data?: {
+      id?: number;
+      status?: string;
+      reference?: string;
+      amount?: number;
+      currency?: string;
+    };
+  };
 
   if (event.event === "charge.success" && event.data?.reference) {
     const supabase = getSupabaseAdmin();
     const { data: order } = await supabase.from("orders").select("id,total_ngn").eq("reference", event.data.reference).maybeSingle();
 
-    if (order && event.data.status === "success" && event.data.currency === "NGN" && event.data.amount === Number(order.total_ngn) * 100) {
+    if (
+      order &&
+      event.data.status === "success" &&
+      event.data.currency === "NGN" &&
+      event.data.amount === Number(order.total_ngn) * 100
+    ) {
       await supabase.rpc("mark_order_paid", {
         p_reference: event.data.reference,
         p_transaction_id: event.data.id ?? null,
       });
-    }).eq("id", order.id);
     }
   }
 
