@@ -23,10 +23,10 @@ export async function GET(_: Request, { params }: { params: Promise<{ reference:
         p_reference: reference,
         p_transaction_id: transaction.id,
       });
+
       if (paidError) {
         return NextResponse.json({ error: "Payment was verified but order finalization needs attention." }, { status: 500 });
       }
-    }).eq("id", order.id);
     }
 
     return NextResponse.json({ paid, reference, status: transaction.status, amountMatches });
