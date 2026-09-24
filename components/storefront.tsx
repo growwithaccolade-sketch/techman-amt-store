@@ -14,9 +14,8 @@ const categories = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator
 export default function Storefront() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [wishlist, setWishlist] = useState<number[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { catalog, settings, lines, totalItems, addItem } = useCart();
+  const { catalog, settings, lines, wishlist, totalItems, addItem, toggleWishlist } = useCart();
   const supportLink = makeWhatsappUrl(settings.whatsappNumber, "Hello TechMan AMT, I need help choosing the right tech product.");
 
   const visibleProducts = useMemo(() => catalog.filter((p) => {
@@ -26,18 +25,16 @@ export default function Storefront() {
     return inCategory && matches;
   }), [catalog, query, category]);
 
-  const toggleWish = (id: number) => setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-
   return (
     <main>
       <div className="announcement"><span>⚡ {settings.announcementText}</span><span>Nationwide delivery across Nigeria</span><span>Secure checkout + human support</span></div>
       <header className="nav shell">
         <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
         <nav className="desktopNav"><Link href="/shop">Shop</Link><a href="#deals">Deals</a><a href="#creator">Creator Tools</a><Link href="/blog">Tech Insights</Link></nav>
-        <div className="navActions"><button className="iconBtn" aria-label="Search" onClick={() => document.getElementById("shop")?.scrollIntoView({behavior:"smooth"})}><Search size={19}/></button><button className="iconBtn badgeWrap" aria-label="Wishlist"><Heart size={19}/>{wishlist.length > 0 && <span className="count">{wishlist.length}</span>}</button><Link className="cartBtn" href="/cart"><ShoppingBag size={18}/> Cart <span>{totalItems}</span></Link><button className="menuBtn" onClick={() => setMobileOpen(true)} aria-label="Open menu"><Menu/></button></div>
+        <div className="navActions"><button className="iconBtn" aria-label="Search" onClick={() => document.getElementById("shop")?.scrollIntoView({behavior:"smooth"})}><Search size={19}/></button><Link className="iconBtn badgeWrap" aria-label="Wishlist" href="/wishlist"><Heart size={19}/>{wishlist.length > 0 && <span className="count">{wishlist.length}</span>}</Link><Link className="cartBtn" href="/cart"><ShoppingBag size={18}/> Cart <span>{totalItems}</span></Link><button className="menuBtn" onClick={() => setMobileOpen(true)} aria-label="Open menu"><Menu/></button></div>
       </header>
 
-      {mobileOpen && <div className="mobileMenu"><button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button><Link href="/shop" onClick={()=>setMobileOpen(false)}>Shop</Link><a href="#deals" onClick={()=>setMobileOpen(false)}>Deals</a><a href="#creator" onClick={()=>setMobileOpen(false)}>Creator Tools</a><Link href="/blog" onClick={()=>setMobileOpen(false)}>Tech Insights</Link><Link href="/cart" onClick={()=>setMobileOpen(false)}>Cart ({totalItems})</Link></div>}
+      {mobileOpen && <div className="mobileMenu"><button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button><Link href="/shop" onClick={()=>setMobileOpen(false)}>Shop</Link><a href="#deals" onClick={()=>setMobileOpen(false)}>Deals</a><a href="#creator" onClick={()=>setMobileOpen(false)}>Creator Tools</a><Link href="/blog" onClick={()=>setMobileOpen(false)}>Tech Insights</Link><Link href="/wishlist" onClick={()=>setMobileOpen(false)}>Wishlist ({wishlist.length})</Link><Link href="/cart" onClick={()=>setMobileOpen(false)}>Cart ({totalItems})</Link></div>}
 
       <section className="hero shell">
         <div className="heroCopy">
@@ -79,7 +76,7 @@ export default function Storefront() {
           {visibleProducts.map((p)=>{
             const inCart = lines.some((line) => line.id === p.id);
             return <article className="productCard" key={p.id}>
-              <div className="productImageWrap">{p.badge && <span className="productBadge">{p.badge}</span>}<button className={`wishBtn ${wishlist.includes(p.id)?"on":""}`} onClick={()=>toggleWish(p.id)} aria-label="Add to wishlist"><Heart size={18} fill={wishlist.includes(p.id)?"currentColor":"none"}/></button><Link href={`/product/${p.slug}`}><Image className="productImage" src={p.image} alt={p.name} width={700} height={700} unoptimized/></Link></div>
+              <div className="productImageWrap">{p.badge && <span className="productBadge">{p.badge}</span>}<button className={`wishBtn ${wishlist.includes(p.id)?"on":""}`} onClick={()=>toggleWishlist(p.id)} aria-label="Add to wishlist"><Heart size={18} fill={wishlist.includes(p.id)?"currentColor":"none"}/></button><Link href={`/product/${p.slug}`}><Image className="productImage" src={p.image} alt={p.name} width={700} height={700} unoptimized/></Link></div>
               <div className="productInfo"><span className="brandName">{p.brand}</span><Link href={`/product/${p.slug}`}><h3>{p.name}</h3></Link><p>{p.blurb}</p>{p.reviews > 0 && <div className="rating"><Star size={14} fill="currentColor"/> {p.rating} <span>({p.reviews})</span></div>}<div className="priceLine"><strong>{money(p.price)}</strong>{p.oldPrice && <del>{money(p.oldPrice)}</del>}</div><button className={`addBtn ${inCart?"added":""}`} onClick={()=>addItem(p.id)} disabled={p.stock <= 0}>{p.stock <= 0 ? "Out of stock" : inCart?"Add another":"Add to cart"} <ShoppingBag size={17}/></button><Link className="viewProduct" href={`/product/${p.slug}`}>View details <ArrowRight size={14}/></Link></div>
             </article>;
           })}
