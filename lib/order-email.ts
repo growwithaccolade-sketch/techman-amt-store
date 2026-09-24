@@ -52,7 +52,7 @@ export async function sendPaidOrderConfirmation(reference: string) {
   try {
     await sendTransactionalEmail({
       to: order.email,
-      subject: `Payment confirmed — ${order.reference}`,
+      subject: `Payment confirmed: ${order.reference}`,
       html,
       idempotencyKey: `payment-confirmation/${order.reference}`,
     });
