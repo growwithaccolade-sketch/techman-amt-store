@@ -2988,3 +2988,50 @@ body{background:#fff}
 @media(max-width:760px){.brandLogo img{width:158px}.adminSidebar .brandLogo img{width:150px}}
 
 /* release-refresh-2026-09-24 */
+
+
+/* 2026 merchandising + stronger brand visibility */
+.brandLogo img{
+  width:220px!important;
+  height:auto;
+}
+.premiumFooter .brandLogo img{
+  width:238px!important;
+}
+.premiumStock.request{
+  color:var(--brand-violet);
+}
+.premiumStock.request:before{
+  animation:none;
+}
+.requestButton,
+.requestLaunchButton{
+  background:var(--brand-violet)!important;
+  border-color:var(--brand-violet)!important;
+  color:#fff!important;
+}
+.requestLaunchButton{
+  min-height:54px;
+  border-radius:10px;
+  padding:0 18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:900;
+  margin-top:16px;
+}
+.requestLaunchButton:hover{
+  background:#6044df!important;
+  transform:translateY(-2px);
+}
+.featuredHead .kicker{
+  color:var(--brand-violet);
+}
+@media(max-width:900px){
+  .brandLogo img{width:184px!important}
+}
+@media(max-width:760px){
+  .brandLogo img{width:156px!important}
+  .premiumFooter .brandLogo img{width:180px!important}
+}
