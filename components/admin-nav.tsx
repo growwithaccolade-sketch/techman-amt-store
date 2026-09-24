@@ -13,7 +13,7 @@ export default function AdminNav({ active }: { active: "overview" | "products" |
         <Link className={active === "inventory" ? "active" : ""} href="/admin/products"><Boxes size={18}/> Inventory</Link>
         <span className={active === "customers" ? "active" : ""}><Users size={18}/> Customers <small>Soon</small></span>
         <span className={active === "analytics" ? "active" : ""}><BarChart3 size={18}/> Analytics <small>Soon</small></span>
-        <span className={active === "settings" ? "active" : ""}><Settings size={18}/> Settings <small>Soon</small></span>
+        <Link className={active === "settings" ? "active" : ""} href="/admin/settings"><Settings size={18}/> Settings</Link>
       </nav>
       <form action={logoutAdmin}><button><LogOut size={18}/> Sign out</button></form>
     </aside>
