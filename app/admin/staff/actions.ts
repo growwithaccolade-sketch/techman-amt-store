@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { hashAdminPassword, requireOwner } from "@/app/admin/actions";
+import { requireOwner } from "@/app/admin/actions";
+import { hashAdminPassword } from "@/lib/admin-auth";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
 
 async function backend() {
