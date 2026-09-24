@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowRight, Check, ChevronRight, Heart, Menu, Search, ShieldCheck, ShoppingBag, Sparkles, Star, Truck, X, Zap } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
-import { money, products } from "@/lib/products";
+import { money } from "@/lib/products";
 import { whatsappUrl } from "@/lib/site";
 
 const categories = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
@@ -15,15 +15,15 @@ export default function Storefront() {
   const [category, setCategory] = useState("All");
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { lines, totalItems, addItem } = useCart();
+  const { catalog, lines, totalItems, addItem } = useCart();
   const supportLink = whatsappUrl("Hello TechMan AMT, I need help choosing the right tech product.");
 
-  const visibleProducts = useMemo(() => products.filter((p) => {
+  const visibleProducts = useMemo(() => catalog.filter((p) => {
     const inCategory = category === "All" || p.category === category;
     const q = query.toLowerCase().trim();
     const matches = !q || `${p.name} ${p.brand} ${p.category}`.toLowerCase().includes(q);
     return inCategory && matches;
-  }), [query, category]);
+  }), [catalog, query, category]);
 
   const toggleWish = (id: number) => setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
 
@@ -78,7 +78,7 @@ export default function Storefront() {
           {visibleProducts.map((p)=>{
             const inCart = lines.some((line) => line.id === p.id);
             return <article className="productCard" key={p.id}>
-              <div className="productImageWrap">{p.badge && <span className="productBadge">{p.badge}</span>}<button className={`wishBtn ${wishlist.includes(p.id)?"on":""}`} onClick={()=>toggleWish(p.id)} aria-label="Add to wishlist"><Heart size={18} fill={wishlist.includes(p.id)?"currentColor":"none"}/></button><Link href={`/product/${p.slug}`}><Image className="productImage" src={p.image} alt={p.name} width={700} height={700}/></Link></div>
+              <div className="productImageWrap">{p.badge && <span className="productBadge">{p.badge}</span>}<button className={`wishBtn ${wishlist.includes(p.id)?"on":""}`} onClick={()=>toggleWish(p.id)} aria-label="Add to wishlist"><Heart size={18} fill={wishlist.includes(p.id)?"currentColor":"none"}/></button><Link href={`/product/${p.slug}`}><Image className="productImage" src={p.image} alt={p.name} width={700} height={700} unoptimized/></Link></div>
               <div className="productInfo"><span className="brandName">{p.brand}</span><Link href={`/product/${p.slug}`}><h3>{p.name}</h3></Link><p>{p.blurb}</p><div className="rating"><Star size={14} fill="currentColor"/> {p.rating} <span>({p.reviews})</span></div><div className="priceLine"><strong>{money(p.price)}</strong>{p.oldPrice && <del>{money(p.oldPrice)}</del>}</div><button className={`addBtn ${inCart?"added":""}`} onClick={()=>addItem(p.id)}>{inCart?"Add another":"Add to cart"} <ShoppingBag size={17}/></button><Link className="viewProduct" href={`/product/${p.slug}`}>View details <ArrowRight size={14}/></Link></div>
             </article>;
           })}
