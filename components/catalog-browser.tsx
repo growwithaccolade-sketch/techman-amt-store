@@ -42,11 +42,28 @@ export default function CatalogBrowser({
       return categoryMatch && brandMatch && queryMatch;
     });
 
+    const badgeWeight = (badge?: string) => {
+      const value = (badge || "").toLowerCase();
+      if (value.includes("new 2026")) return 100;
+      if (value.includes("bestseller") || value.includes("popular")) return 80;
+      if (value.includes("featured") || value.includes("pro")) return 65;
+      if (value.includes("creator") || value.includes("camera")) return 55;
+      return badge ? 35 : 0;
+    };
+
     return [...filtered].sort((a, b) => {
-      if (sort === "price-low") return a.price - b.price;
+      if (sort === "price-low") {
+        if (a.price <= 0 && b.price > 0) return 1;
+        if (b.price <= 0 && a.price > 0) return -1;
+        return a.price - b.price;
+      }
       if (sort === "price-high") return b.price - a.price;
       if (sort === "stock") return b.stock - a.stock;
-      return (b.badge ? 1 : 0) - (a.badge ? 1 : 0);
+      const badgeDiff = badgeWeight(b.badge) - badgeWeight(a.badge);
+      if (badgeDiff) return badgeDiff;
+      const availabilityDiff = Number(b.stock > 0) - Number(a.stock > 0);
+      if (availabilityDiff) return availabilityDiff;
+      return b.id - a.id;
     });
   }, [catalog, query, category, brand, sort]);
 
@@ -65,7 +82,7 @@ export default function CatalogBrowser({
         </label>
         <label>Category<select value={category} onChange={(e) => setCategory(e.target.value)}>{categories.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label>Brand<select value={brand} onChange={(e) => setBrand(e.target.value)}>{brands.map((item) => <option key={item}>{item}</option>)}</select></label>
-        <label>Sort<select value={sort} onChange={(e) => setSort(e.target.value)}><option value="featured">Featured</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="stock">Most stock</option></select></label>
+        <label>Sort<select value={sort} onChange={(e) => setSort(e.target.value)}><option value="featured">New & trending</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="stock">Most stock</option></select></label>
       </div>
 
       <div className="catalogMeta premiumCatalogMeta">
