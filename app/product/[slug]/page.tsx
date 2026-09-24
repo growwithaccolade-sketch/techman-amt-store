@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Check, PackageCheck, ShieldCheck, Star, Truck } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -45,12 +44,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     image: [product.image],
     description: product.blurb,
     brand: { "@type": "Brand", name: product.brand },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "NGN",
-      price: product.price,
-      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-    },
+    ...(product.price > 0 ? {
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "NGN",
+        price: product.price,
+        availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      },
+    } : {}),
     ...(reviews.length ? {
       aggregateRating: {
         "@type": "AggregateRating",
@@ -73,11 +74,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <h1>{product.name}</h1>
             {reviews.length > 0 && <div className="detailRating"><Star size={16} fill="currentColor"/> {averageRating.toFixed(1)} <span>({reviews.length} verified {reviews.length === 1 ? "review" : "reviews"})</span></div>}
             <p className="detailBlurb">{product.blurb}</p>
-            <div className="detailPrice"><strong>{money(product.price)}</strong>{product.oldPrice && <del>{money(product.oldPrice)}</del>}</div>
-            {product.oldPrice && product.oldPrice > product.price && <p className="savings">You save {money(product.oldPrice - product.price)}</p>}
-            <div className="stockLine"><PackageCheck size={18}/><b>{product.stock > 0 ? "In stock" : "Out of stock"}</b><span>{product.stock > 0 ? `${product.stock} units available` : "Check back soon"}</span></div>
+            <div className="detailPrice"><strong>{product.price > 0 ? money(product.price) : "Price on request"}</strong>{product.oldPrice && product.price > 0 && <del>{money(product.oldPrice)}</del>}</div>
+            {product.oldPrice && product.price > 0 && product.oldPrice > product.price && <p className="savings">You save {money(product.oldPrice - product.price)}</p>}
+            <div className="stockLine"><PackageCheck size={18}/><b>{product.price <= 0 ? "Availability on request" : product.stock > 0 ? "In stock" : "Out of stock"}</b><span>{product.price <= 0 ? "Contact TechMan AMT for current price and availability" : product.stock > 0 ? `${product.stock} units available` : "Check back soon"}</span></div>
             {product.highlights.length > 0 && <div className="benefitList">{product.highlights.map((item) => <span key={item}><Check size={17}/>{item}</span>)}</div>}
-            {product.stock > 0 ? <ProductActions id={product.id} name={product.name} price={money(product.price)}/> : <div className="setupNotice">This item is currently out of stock. Contact support for restock timing.</div>}
+            {product.price <= 0 ? <Link className="requestLaunchButton" href={`/device-request?product=${encodeURIComponent(product.name)}`}>Request current price and availability</Link> : product.stock > 0 ? <ProductActions id={product.id} name={product.name} price={money(product.price)}/> : <div className="setupNotice">This item is currently out of stock. Contact support for restock timing.</div>}
             <div className="purchaseTrust"><span><ShieldCheck size={18}/><b>{product.warranty}</b></span><span><Truck size={18}/><b>Nationwide delivery options</b></span></div>
           </div>
         </section>
@@ -102,7 +103,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </div>
         </section>
 
-        {related.length > 0 && <section className="relatedSection"><div className="sectionHead"><div><span className="kicker">RELATED</span><h2>More in {product.category}.</h2></div></div><div className="relatedGrid">{related.map((item) => <Link className="relatedCard" key={item.id} href={`/product/${item.slug}`}><div className="relatedImageWrap"><ProductImage src={item.image} alt={item.name} brand={item.brand} sizes="(max-width: 760px) 94vw, 30vw"/></div><span className="brandName">{item.brand}</span><h3>{item.name}</h3><strong>{money(item.price)}</strong></Link>)}</div></section>}
+        {related.length > 0 && <section className="relatedSection"><div className="sectionHead"><div><span className="kicker">RELATED</span><h2>More in {product.category}.</h2></div></div><div className="relatedGrid">{related.map((item) => <Link className="relatedCard" key={item.id} href={`/product/${item.slug}`}><div className="relatedImageWrap"><ProductImage src={item.image} alt={item.name} brand={item.brand} sizes="(max-width: 760px) 94vw, 30vw"/></div><span className="brandName">{item.brand}</span><h3>{item.name}</h3><strong>{item.price > 0 ? money(item.price) : "Price on request"}</strong></Link>)}</div></section>}
       </main>
     </>
   );
