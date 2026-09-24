@@ -13,6 +13,10 @@ type OrderRow = {
   phone: string;
   city: string;
   state: string;
+  subtotal_ngn: number;
+  discount_ngn?: number | null;
+  coupon_code?: string | null;
+  delivery_fee_ngn?: number | null;
   total_ngn: number;
   status: string;
   payment_status: string;
@@ -52,6 +56,10 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                   <span><b>Phone</b>{order.phone}</span>
                   <span><b>Destination</b>{order.city}, {order.state}</span>
                   <span><b>Created</b>{new Date(order.created_at).toLocaleString("en-NG")}</span>
+                  <span><b>Subtotal</b>{money(Number(order.subtotal_ngn || 0))}</span>
+                  <span><b>Discount</b>{order.discount_ngn ? `-${money(Number(order.discount_ngn))}` : "—"}</span>
+                  <span><b>Coupon</b>{order.coupon_code || "—"}</span>
+                  <span><b>Delivery</b>{order.delivery_fee_ngn ? money(Number(order.delivery_fee_ngn)) : "Free / not charged"}</span>
                 </div>
                 <div className="trackedItems">{order.order_items?.map((item) => <div key={item.product_name}><span>{item.product_name}</span><b>× {item.quantity}</b></div>)}</div>
                 <form className="adminForm orderUpdateForm" action={updateOrder}>
