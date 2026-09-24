@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Heart, Search, ShoppingBag } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -99,21 +98,27 @@ export default function CatalogBrowser({
                   <Link href={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
                   <p>{product.blurb}</p>
                   <div className="premiumPriceLine">
-                    <strong>{money(product.price)}</strong>
+                    <strong>{product.price > 0 ? money(product.price) : "Price on request"}</strong>
                     {product.oldPrice && <del>{money(product.oldPrice)}</del>}
                   </div>
-                  <div className={product.stock > 0 ? "premiumStock" : "premiumStock out"}>
-                    {product.stock > 0 ? `${product.stock} available` : "Out of stock"}
+                  <div className={product.price <= 0 ? "premiumStock request" : product.stock > 0 ? "premiumStock" : "premiumStock out"}>
+                    {product.price <= 0 ? "Availability on request" : product.stock > 0 ? `${product.stock} available` : "Out of stock"}
                   </div>
                   <div className="premiumCardActions">
-                    <button
-                      className={`premiumAddButton ${inCart ? "added" : ""}`}
-                      onClick={() => addItem(product.id)}
-                      disabled={product.stock <= 0}
-                    >
-                      <ShoppingBag size={16}/>
-                      {product.stock <= 0 ? "Out of stock" : inCart ? "Add another" : "Add to cart"}
-                    </button>
+                    {product.price <= 0 ? (
+                      <Link className="premiumAddButton requestButton" href={`/device-request?product=${encodeURIComponent(product.name)}`}>
+                        Request price
+                      </Link>
+                    ) : (
+                      <button
+                        className={`premiumAddButton ${inCart ? "added" : ""}`}
+                        onClick={() => addItem(product.id)}
+                        disabled={product.stock <= 0}
+                      >
+                        <ShoppingBag size={16}/>
+                        {product.stock <= 0 ? "Out of stock" : inCart ? "Add another" : "Add to cart"}
+                      </button>
+                    )}
                     <Link className="premiumDetailButton" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
                       <ArrowUpRight size={18}/>
                     </Link>
