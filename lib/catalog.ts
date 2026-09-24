@@ -1,7 +1,7 @@
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
 import { type Product, products as demoProducts } from "@/lib/products";
 
-const fallbackImage = "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=85";
+const fallbackImage = "";
 
 function mapRow(row: Record<string, unknown>): Product {
   const condition = row.condition === "UK Used" ? "UK Used" : "New";
