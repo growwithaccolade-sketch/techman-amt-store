@@ -5,6 +5,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Heart, Menu, Scale, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
+import BrandLogo from "@/components/brand-logo";
 
 export default function CommerceHeader() {
   const [open, setOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function CommerceHeader() {
       </div>
 
       <header className="nav shell premiumNav commercePremiumNav">
-        <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
+        <BrandLogo/>
 
         <nav className="desktopNav premiumDesktopNav">
           <Link className={pathname === "/" ? "current" : ""} aria-current={pathname === "/" ? "page" : undefined} href="/">Home</Link>
@@ -48,9 +49,7 @@ export default function CommerceHeader() {
       {open && (
         <div className="mobileMenu premiumMobileMenu">
           <div className="mobileMenuTop">
-            <Link href="/" className="brand premiumBrand" onClick={() => setOpen(false)}>
-              <span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span>
-            </Link>
+            <BrandLogo/>
             <button onClick={() => setOpen(false)} aria-label="Close menu"><X/></button>
           </div>
           <nav>
