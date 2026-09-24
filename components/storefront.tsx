@@ -88,7 +88,7 @@ export default function Storefront() {
         </Link>
 
         <nav className="desktopNav premiumDesktopNav">
-          <Link href="/">Home</Link>
+          <Link className="current" aria-current="page" href="/">Home</Link>
           <Link href="/shop">Shop</Link>
           <a href="#collections">Collections</a>
           <Link href="/blog">Guides</Link>
@@ -145,10 +145,10 @@ export default function Storefront() {
           <div className="heroOverline">TECHMAN AMT</div>
           <h1>Technology,<br/><span>properly selected.</span></h1>
           <p>
-            Phones, laptops, audio and creator tools with clear pricing, product details and support.
+            Current phones, laptops, audio and creator tools. Clear specs, clear condition and delivery across Nigeria.
           </p>
           <div className="premiumHeroCtas">
-            <Link className="primaryBtn heroPrimary" href="/shop">Shop products <ArrowRight size={17}/></Link>
+            <Link className="primaryBtn heroPrimary" href="/shop">Shop available stock <ArrowRight size={17}/></Link>
             <Link className="textCta" href="/device-request">Request a device <ArrowUpRight size={16}/></Link>
           </div>
           <div className="heroProof">
@@ -224,12 +224,9 @@ export default function Storefront() {
       <section className="premiumDeal">
         <div className="shell premiumDealInner">
           <div className="premiumDealCopy">
-            <span className="dealLabel">THE SMART SETUP</span>
-            <h2>Buy the setup.<br/>Not random gadgets.</h2>
-            <p>
-              Start with the main device, then add only the accessories that
-              improve how you work, create or travel.
-            </p>
+            <span className="dealLabel">MATCHED ACCESSORIES</span>
+            <h2>Complete the setup.</h2>
+            <p>Add the power, audio, storage and input gear that fits the main device.</p>
             <Link href="/shop" className="lightBtn">Browse accessories <ArrowRight size={17}/></Link>
           </div>
           <div className="dealFeatureStack">
@@ -287,6 +284,9 @@ export default function Storefront() {
                     <strong>{money(product.price)}</strong>
                     {product.oldPrice && <del>{money(product.oldPrice)}</del>}
                   </div>
+                  <div className={product.stock > 0 ? "premiumStock" : "premiumStock out"}>
+                    {product.stock > 0 ? `${product.stock} available` : "Out of stock"}
+                  </div>
                   <div className="premiumCardActions">
                     <button
                       className={`premiumAddButton ${inCart ? "added" : ""}`}
@@ -315,11 +315,8 @@ export default function Storefront() {
       <section className="whySection shell">
         <div className="whyLead">
           <span className="kicker">WHY TECHMAN AMT</span>
-          <h2>The important details are visible before checkout.</h2>
-          <p>
-            Clear product condition, useful context, delivery transparency and
-            real support before you spend.
-          </p>
+          <h2>Buy with the details upfront.</h2>
+          <p>See product condition, warranty, stock, delivery and specifications before payment.</p>
         </div>
         <div className="whyGrid">
           <article><span>01</span><ShieldCheck/><h3>Product details</h3><p>Condition, warranty and key specifications are shown on the product page.</p></article>
@@ -334,9 +331,9 @@ export default function Storefront() {
           <span className="editorialTag">CREATOR TOOLS</span>
         </div>
         <div className="editorialCopy">
-          <span className="kicker">CREATE BETTER</span>
-          <h2>Better content starts before the camera rolls.</h2>
-          <p>Clean audio, stable framing and dependable power usually matter more than buying another random accessory.</p>
+          <span className="kicker">CREATOR TOOLS</span>
+          <h2>Build a reliable production kit.</h2>
+          <p>Wireless audio, power, storage and support gear for mobile video, interviews and streaming.</p>
           <div className="editorialChecklist">
             <span><Check/> Wireless microphones</span>
             <span><Check/> Tripods & phone rigs</span>
@@ -385,9 +382,9 @@ export default function Storefront() {
       <section className="newsletter premiumNewsletter">
         <div className="shell premiumNewsletterInner">
           <div>
-            <span className="kicker">FIRST ACCESS</span>
-            <h2>Useful drops. No inbox noise.</h2>
-            <p>New products, buying guides and offers worth opening.</p>
+            <span className="kicker">STOCK UPDATES</span>
+            <h2>New stock and selected offers.</h2>
+            <p>Occasional updates on arrivals, price changes and buying guides.</p>
           </div>
           <NewsletterForm/>
         </div>
