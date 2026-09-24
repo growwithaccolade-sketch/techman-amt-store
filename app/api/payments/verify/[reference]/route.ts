@@ -19,13 +19,14 @@ export async function GET(_: Request, { params }: { params: Promise<{ reference:
     const paid = transaction.status === "success" && transaction.currency === "NGN" && amountMatches;
 
     if (paid) {
-      await supabase.from("orders").update({
-        payment_status: "paid",
-        status: "paid",
-        paystack_transaction_id: transaction.id,
-        paid_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }).eq("id", order.id);
+      const { error: paidError } = await supabase.rpc("mark_order_paid", {
+        p_reference: reference,
+        p_transaction_id: transaction.id,
+      });
+      if (paidError) {
+        return NextResponse.json({ error: "Payment was verified but order finalization needs attention." }, { status: 500 });
+      }
+    }).eq("id", order.id);
     }
 
     return NextResponse.json({ paid, reference, status: transaction.status, amountMatches });
