@@ -12,8 +12,8 @@ export default function CommerceHeader() {
   return (
     <>
       <div className="announcement premiumAnnouncement">
-        <span>{settings.announcementText || "Better tech. Smarter upgrades."}</span>
-        <span className="announcementDesktop">Nationwide delivery · Secure checkout · Human support</span>
+        <span>{settings.announcementText || "Phones, laptops, audio and creator tools."}</span>
+        <span className="announcementDesktop">Delivery across Nigeria · Order support</span>
       </div>
 
       <header className="nav shell premiumNav commercePremiumNav">
@@ -53,7 +53,7 @@ export default function CommerceHeader() {
           </div>
           <nav>
             <Link href="/shop" onClick={() => setOpen(false)}>Shop</Link>
-            <Link href="/blog" onClick={() => setOpen(false)}>Buying Guides</Link>
+            <Link href="/blog" onClick={() => setOpen(false)}>Guides</Link>
             <Link href="/trade-in" onClick={() => setOpen(false)}>Trade In</Link>
             <Link href="/corporate" onClick={() => setOpen(false)}>Bulk Orders</Link>
             <Link href="/track-order" onClick={() => setOpen(false)}>Track Order</Link>
