@@ -2,11 +2,13 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Product } from "@/lib/products";
+import type { StoreSettings } from "@/lib/site";
 
 export type CartLine = { id: number; qty: number };
 
 type CartContextValue = {
   catalog: Product[];
+  settings: StoreSettings;
   lines: CartLine[];
   totalItems: number;
   addItem: (id: number, qty?: number) => void;
@@ -18,7 +20,7 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "techman-amt-cart";
 
-export function CartProvider({ children, catalog }: { children: React.ReactNode; catalog: Product[] }) {
+export function CartProvider({ children, catalog, settings }: { children: React.ReactNode; catalog: Product[]; settings: StoreSettings }) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
@@ -58,13 +60,14 @@ export function CartProvider({ children, catalog }: { children: React.ReactNode;
 
   const value = useMemo<CartContextValue>(() => ({
     catalog,
+    settings,
     lines,
     totalItems: lines.reduce((sum, line) => sum + line.qty, 0),
     addItem,
     removeItem,
     setQty,
     clearCart,
-  }), [catalog, lines, addItem, removeItem, setQty, clearCart]);
+  }), [catalog, settings, lines, addItem, removeItem, setQty, clearCart]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
