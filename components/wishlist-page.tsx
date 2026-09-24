@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
+import ProductImage from "@/components/product-image";
 
 export default function WishlistPageClient() {
   const { catalog, wishlist, toggleWishlist, addItem, lines, clearWishlist } = useCart();
@@ -16,13 +16,13 @@ export default function WishlistPageClient() {
 
   return (
     <section className="wishlistPage shell">
-      <div className="pageIntro"><span className="kicker">WISHLIST</span><h1>Keep the good options close.</h1><p>Your wishlist stays on this browser until you remove it.</p></div>
+      <div className="pageIntro"><span className="kicker">WISHLIST</span><h1>Saved products.</h1><p>Saved products stay on this browser until you remove them.</p></div>
       <div className="wishlistToolbar"><b>{products.length} saved products</b><button onClick={clearWishlist}>Clear wishlist</button></div>
       <div className="productGrid">
         {products.map((product) => product && <article className="productCard" key={product.id}>
           <div className="productImageWrap">
             <button className="wishBtn on" onClick={() => toggleWishlist(product.id)} aria-label="Remove from wishlist"><Trash2 size={17}/></button>
-            <Link href={`/product/${product.slug}`}><Image className="productImage" src={product.image} alt={product.name} width={700} height={700} unoptimized/></Link>
+            <Link href={`/product/${product.slug}`}><ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="(max-width: 720px) 92vw, 31vw"/></Link>
           </div>
           <div className="productInfo">
             <span className="brandName">{product.brand} · {product.category}</span>
