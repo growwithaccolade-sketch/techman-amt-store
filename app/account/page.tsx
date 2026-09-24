@@ -44,7 +44,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   return <>
     <CommerceHeader/>
     <main className="accountPage shell">
-      <section className="accountHero"><div><span className="kicker">MY ACCOUNT</span><h1>Good to have you back.</h1><p>{user.email}</p></div><form action={signOutCustomer}><button className="secondaryAction"><LogOut size={17}/> Sign out</button></form></section>
+      <section className="accountHero"><div><span className="kicker">ACCOUNT</span><h1>Your account.</h1><p>{user.email}</p></div><form action={signOutCustomer}><button className="secondaryAction"><LogOut size={17}/> Sign out</button></form></section>
       {error && <div className="adminNotice error">Profile changes could not be saved.</div>}
       {success && <div className="adminNotice success">Profile updated.</div>}
 
@@ -60,13 +60,13 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         </section>
 
         <section className="accountCard">
-          <div className="accountCardHead"><ShoppingBag/><div><span className="kicker">QUICK ACCESS</span><h2>Your shopping tools</h2></div></div>
+          <div className="accountCardHead"><ShoppingBag/><div><span className="kicker">SHOPPING</span><h2>Quick links</h2></div></div>
           <div className="accountLinks"><Link href="/wishlist"><Heart/> Wishlist</Link><Link href="/compare"><Scale/> Compare products</Link><Link href="/track-order"><PackageSearch/> Track an order</Link><Link href="/shop"><ShoppingBag/> Continue shopping</Link></div>
         </section>
       </div>
 
       <section className="accountOrders">
-        <div className="sectionHead"><div><span className="kicker">ORDER HISTORY</span><h2>Your TechMan AMT orders.</h2></div><p>Orders are matched to the email on this verified account.</p></div>
+        <div className="sectionHead"><div><span className="kicker">ORDERS</span><h2>Order history.</h2></div><p>Orders using this account email appear here.</p></div>
         {!commerceBackendConfigured() ? <div className="adminNotice warning">The order database is not connected yet.</div> :
         orders.length === 0 ? <div className="adminEmpty"><h3>No matching orders yet.</h3><p>Guest orders using this same email will appear here once recorded.</p></div> :
         <div className="accountOrderList">{orders.map((order)=><article key={order.reference} className="accountOrder">
