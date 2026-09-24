@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Scale, X } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
+import ProductImage from "@/components/product-image";
 
 export default function ComparePageClient() {
   const { catalog, compare, toggleCompare, clearCompare } = useCart();
@@ -18,11 +18,11 @@ export default function ComparePageClient() {
 
   return (
     <section className="comparePage shell">
-      <div className="pageIntro"><span className="kicker">COMPARE</span><h1>See the differences side by side.</h1><p>Comparison is limited to four products so the table stays useful.</p></div>
+      <div className="pageIntro"><span className="kicker">COMPARE</span><h1>Compare products.</h1><p>Compare up to four products.</p></div>
       <div className="wishlistToolbar"><b>{products.length} of 4 selected</b><button onClick={clearCompare}>Clear comparison</button></div>
       <div className="compareScroller">
         <table className="compareTable">
-          <thead><tr><th>Feature</th>{products.map((product) => product && <th key={product.id}><button className="compareRemove" onClick={() => toggleCompare(product.id)} aria-label="Remove product"><X size={15}/></button><Image src={product.image} alt={product.name} width={180} height={140} unoptimized/><Link href={`/product/${product.slug}`}>{product.name}</Link></th>)}</tr></thead>
+          <thead><tr><th>Feature</th>{products.map((product) => product && <th key={product.id}><button className="compareRemove" onClick={() => toggleCompare(product.id)} aria-label="Remove product"><X size={15}/></button><div className="compareImageWrap"><ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="180px"/></div><Link href={`/product/${product.slug}`}>{product.name}</Link></th>)}</tr></thead>
           <tbody>
             <tr><td>Price</td>{products.map((p) => p && <td key={p.id}><strong>{money(p.price)}</strong></td>)}</tr>
             <tr><td>Brand</td>{products.map((p) => p && <td key={p.id}>{p.brand}</td>)}</tr>
@@ -30,7 +30,7 @@ export default function ComparePageClient() {
             <tr><td>Condition</td>{products.map((p) => p && <td key={p.id}>{p.condition}</td>)}</tr>
             <tr><td>Stock</td>{products.map((p) => p && <td key={p.id}>{p.stock > 0 ? `${p.stock} available` : "Out of stock"}</td>)}</tr>
             <tr><td>Warranty</td>{products.map((p) => p && <td key={p.id}>{p.warranty}</td>)}</tr>
-            {specKeys.map((key) => <tr key={key}><td>{key}</td>{products.map((p) => p && <td key={p.id}>{p.specs[key] || "—"}</td>)}</tr>)}
+            {specKeys.map((key) => <tr key={key}><td>{key}</td>{products.map((p) => p && <td key={p.id}>{p.specs[key] || "Not listed"}</td>)}</tr>)}
           </tbody>
         </table>
       </div>
