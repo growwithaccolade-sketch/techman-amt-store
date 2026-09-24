@@ -63,6 +63,9 @@ export default function MotionController() {
     elements.forEach((element, index) => {
       element.classList.add("revealItem");
       element.style.setProperty("--reveal-delay", `${Math.min(index % 6, 5) * 55}ms`);
+      if (element.getBoundingClientRect().top < window.innerHeight * 0.92) {
+        element.classList.add("isRevealed");
+      }
     });
 
     if (reduced) {
