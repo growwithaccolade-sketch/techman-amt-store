@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 92" role="img" aria-labelledby="title desc">
+  <title id="title">TechMan AMT</title><desc id="desc">TechMan AMT light wordmark with geometric T symbol</desc>
+  <rect x="4" y="8" width="76" height="76" rx="18" fill="#3157FF"/>
+  <path d="M22 28h40v12H49v30H35V40H22z" fill="#fff"/>
+  <circle cx="61" cy="64" r="7" fill="#A8F2D5"/>
+  <text x="102" y="58" font-family="Arial,Helvetica,sans-serif" font-size="37" font-weight="800" letter-spacing="1.6" fill="#FFFFFF">TECHMAN</text>
+  <text x="318" y="58" font-family="Arial,Helvetica,sans-serif" font-size="37" font-weight="800" letter-spacing="1.6" fill="#8FA7FF">AMT</text>
+</svg>
