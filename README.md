@@ -97,6 +97,8 @@ supabase/migrations/009_customer_accounts.sql
 supabase/migrations/010_product_image_storage.sql
 supabase/migrations/011_delivery_zones.sql
 supabase/migrations/012_order_notifications.sql
+supabase/migrations/013_admin_staff_and_pages.sql
+supabase/migrations/014_catalog_expansion_2026.sql
 ```
 
 in the Supabase SQL editor or through your migration workflow.
@@ -167,3 +169,7 @@ The project is structured for Vercel. Import this GitHub repository into Vercel,
 11. Create and verify the sending domain in Resend before setting `RESEND_FROM_EMAIL`.
 12. Configure delivery zones in `/admin/delivery` before relying on online delivery totals.
 13. Test coupons, delivery, webhook inventory, email and account recovery using test-mode payments before switching Paystack to live keys.
+
+## Admin access
+
+The owner login uses `ADMIN_USERNAME`, `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` when configured. Staff accounts are created from `/admin/staff` and stored as one-way password hashes after migration 013 is applied. Page content can be edited under `/admin/pages`; products, images, highlights and specifications remain editable under `/admin/products`.
