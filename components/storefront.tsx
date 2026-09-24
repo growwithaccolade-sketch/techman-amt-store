@@ -28,6 +28,7 @@ import { money } from "@/lib/products";
 import { makeWhatsappUrl } from "@/lib/site";
 import NewsletterForm from "@/components/newsletter-form";
 import ProductImage from "@/components/product-image";
+import type { EditablePage } from "@/lib/site-pages";
 
 const categoryMeta = [
   { name: "Phones", copy: "Apple, Samsung and Android phones.", icon: Smartphone },
@@ -39,7 +40,7 @@ const categoryMeta = [
 
 const filters = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
 
-export default function Storefront() {
+export default function Storefront({ homeContent }: { homeContent?: EditablePage }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -70,6 +71,9 @@ export default function Storefront() {
   const secondaryHero = heroProducts[1];
   const tertiaryHero = heroProducts[2];
   const creatorProduct = catalog.find((product) => product.category === "Creator Tools");
+  const heroTitle = (homeContent?.title || "Technology,|properly selected.").split("|");
+  const contactSection = homeContent?.sections?.[0];
+  const newsletterSection = homeContent?.sections?.[1];
 
   const productForCategory = (name: string) =>
     catalog.find((product) => product.category === name) || catalog[0];
@@ -142,11 +146,7 @@ export default function Storefront() {
 
       <section className="premiumHero shell">
         <div className="premiumHeroCopy">
-          <div className="heroOverline">TECHMAN AMT</div>
-          <h1>Technology,<br/><span>properly selected.</span></h1>
-          <p>
-            Current phones, laptops, audio and creator tools. Clear specs, clear condition and delivery across Nigeria.
-          </p>
+          <div className="heroOverline">{homeContent?.eyebrow || "TECHMAN AMT"}</div><h1>{heroTitle[0]}{heroTitle[1] && <><br/><span>{heroTitle[1]}</span></>}</h1><p>{homeContent?.intro || "Current phones, laptops, audio and creator tools. Clear specs, clear condition and delivery across Nigeria."}</p>
           <div className="premiumHeroCtas">
             <Link className="primaryBtn heroPrimary" href="/shop">Shop available stock <ArrowRight size={17}/></Link>
             <Link className="textCta" href="/device-request">Request a device <ArrowUpRight size={16}/></Link>
@@ -258,7 +258,7 @@ export default function Storefront() {
         </div>
 
         <div className="premiumProductGrid">
-          {visibleProducts.map((product) => {
+          {visibleProducts.slice(0, 9).map((product) => {
             const inCart = lines.some((line) => line.id === product.id);
             return (
               <article className="premiumProductCard" key={product.id}>
@@ -369,8 +369,7 @@ export default function Storefront() {
       <section className="homeContactBand shell">
         <div className="homeContactCopy">
           <span className="kicker">CONTACT</span>
-          <h2>Need a product check or order help?</h2>
-          <p>Contact TechMan AMT for stock, compatibility, delivery and order questions.</p>
+          <h2>{contactSection?.title || "Need a product check or order help?"}</h2><p>{contactSection?.body || "Contact TechMan AMT for stock, compatibility, delivery and order questions."}</p>
         </div>
         <div className="homeContactActions">
           <Link className="contactPrimary" href="/contact">Contact us <ArrowRight size={17}/></Link>
@@ -383,8 +382,7 @@ export default function Storefront() {
         <div className="shell premiumNewsletterInner">
           <div>
             <span className="kicker">STOCK UPDATES</span>
-            <h2>New stock and selected offers.</h2>
-            <p>Occasional updates on arrivals, price changes and buying guides.</p>
+            <h2>{newsletterSection?.title || "New stock and selected offers."}</h2><p>{newsletterSection?.body || "Occasional updates on arrivals, price changes and buying guides."}</p>
           </div>
           <NewsletterForm/>
         </div>
@@ -401,7 +399,7 @@ export default function Storefront() {
           <div><b>Company</b><Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/trade-in">Trade In</Link><Link href="/corporate">Bulk Orders</Link></div>
           <div><b>Support</b>{supportLink ? <a className="whatsappLink" href={supportLink} target="_blank" rel="noreferrer">WhatsApp support</a> : <span>WhatsApp being configured</span>}<Link href="/faq">FAQs</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div>
         </div>
-        <div className="shell copyright premiumCopyright"><span>© 2026 TechMan AMT</span><span>Phones, laptops, audio and creator tools.</span></div>
+        <div className="shell copyright premiumCopyright"><span>© 2026 TechMan AMT · {settings.locationLabel}</span><a href={settings.footerCreditUrl} target="_blank" rel="noreferrer">{settings.footerCreditLabel}</a></div>
       </footer>
 
       <nav className="mobileDock" aria-label="Mobile navigation">
