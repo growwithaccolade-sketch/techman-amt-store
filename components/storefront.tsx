@@ -17,7 +17,6 @@ import {
   ShieldCheck,
   ShoppingBag,
   Smartphone,
-  Sparkles,
   Truck,
   UserRound,
   X,
@@ -30,11 +29,11 @@ import NewsletterForm from "@/components/newsletter-form";
 import ProductImage from "@/components/product-image";
 
 const categoryMeta = [
-  { name: "Phones", copy: "Flagships, everyday performers and camera-first picks.", icon: Smartphone },
-  { name: "Laptops", copy: "Work, study and creative machines that fit the job.", icon: Laptop },
-  { name: "Creator Tools", copy: "Audio, lighting and gear for better content.", icon: Mic2 },
-  { name: "Audio", copy: "Headphones, speakers and focused listening.", icon: Headphones },
-  { name: "Accessories", copy: "Power, productivity and the useful extras.", icon: Zap },
+  { name: "Phones", copy: "Apple, Samsung and Android phones.", icon: Smartphone },
+  { name: "Laptops", copy: "MacBooks and Windows laptops.", icon: Laptop },
+  { name: "Creator Tools", copy: "Microphones, lighting, rigs and storage.", icon: Mic2 },
+  { name: "Audio", copy: "Headphones, earbuds and speakers.", icon: Headphones },
+  { name: "Accessories", copy: "Chargers, power banks, mice and hubs.", icon: Zap },
 ];
 
 const filters = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
@@ -78,7 +77,7 @@ export default function Storefront() {
     <main className="siteFrame">
       <div className="announcement premiumAnnouncement">
         <span>{settings.announcementText || "Phones, laptops, audio and creator tools"}</span>
-        <span className="announcementDesktop">Nationwide delivery · Secure payment · Human support</span>
+        <span className="announcementDesktop">Delivery across Nigeria · Order support</span>
       </div>
 
       <header className="nav shell premiumNav">
