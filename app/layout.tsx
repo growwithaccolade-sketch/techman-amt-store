@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { CartProvider } from "@/components/cart-provider";
 import MotionController from "@/components/motion-controller";
+import SiteFooter from "@/components/site-footer";
 import { getStoreCatalog } from "@/lib/catalog";
 import { getStoreSettings } from "@/lib/store-settings";
 import "./globals.css";
@@ -39,5 +40,5 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const [catalog, settings] = await Promise.all([getStoreCatalog(), getStoreSettings()]);
-  return <html lang="en"><body><MotionController/><CartProvider catalog={catalog} settings={settings}>{children}</CartProvider></body></html>;
+  return <html lang="en"><body><MotionController/><CartProvider catalog={catalog} settings={settings}>{children}<SiteFooter/></CartProvider></body></html>;
 }
