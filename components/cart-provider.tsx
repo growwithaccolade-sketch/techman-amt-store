@@ -10,34 +10,44 @@ type CartContextValue = {
   catalog: Product[];
   settings: StoreSettings;
   lines: CartLine[];
+  wishlist: number[];
   totalItems: number;
   addItem: (id: number, qty?: number) => void;
   removeItem: (id: number) => void;
   setQty: (id: number, qty: number) => void;
   clearCart: () => void;
+  toggleWishlist: (id: number) => void;
+  clearWishlist: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
-const STORAGE_KEY = "techman-amt-cart";
+const CART_KEY = "techman-amt-cart";
+const WISHLIST_KEY = "techman-amt-wishlist";
 
 export function CartProvider({ children, catalog, settings }: { children: React.ReactNode; catalog: Product[]; settings: StoreSettings }) {
   const [lines, setLines] = useState<CartLine[]>([]);
+  const [wishlist, setWishlist] = useState<number[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setLines(JSON.parse(raw));
+      const cartRaw = localStorage.getItem(CART_KEY);
+      const wishlistRaw = localStorage.getItem(WISHLIST_KEY);
+      if (cartRaw) setLines(JSON.parse(cartRaw));
+      if (wishlistRaw) setWishlist(JSON.parse(wishlistRaw));
     } catch {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(CART_KEY);
+      localStorage.removeItem(WISHLIST_KEY);
     } finally {
       setHydrated(true);
     }
   }, []);
 
   useEffect(() => {
-    if (hydrated) localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
-  }, [lines, hydrated]);
+    if (!hydrated) return;
+    localStorage.setItem(CART_KEY, JSON.stringify(lines));
+    localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+  }, [lines, wishlist, hydrated]);
 
   const addItem = useCallback((id: number, qty = 1) => setLines((current) => {
     const product = catalog.find((item) => item.id === id);
@@ -57,17 +67,22 @@ export function CartProvider({ children, catalog, settings }: { children: React.
   }), [catalog]);
 
   const clearCart = useCallback(() => setLines((current) => current.length ? [] : current), []);
+  const toggleWishlist = useCallback((id: number) => setWishlist((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]), []);
+  const clearWishlist = useCallback(() => setWishlist((current) => current.length ? [] : current), []);
 
   const value = useMemo<CartContextValue>(() => ({
     catalog,
     settings,
     lines,
+    wishlist,
     totalItems: lines.reduce((sum, line) => sum + line.qty, 0),
     addItem,
     removeItem,
     setQty,
     clearCart,
-  }), [catalog, settings, lines, addItem, removeItem, setQty, clearCart]);
+    toggleWishlist,
+    clearWishlist,
+  }), [catalog, settings, lines, wishlist, addItem, removeItem, setQty, clearCart, toggleWishlist, clearWishlist]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
