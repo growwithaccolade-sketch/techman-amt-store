@@ -1,0 +1,102 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { hasAdminSession } from "@/app/admin/actions";
+import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
+
+function text(formData: FormData, key: string) {
+  return String(formData.get(key) || "").trim();
+}
+
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+async function requireAdmin() {
+  if (!(await hasAdminSession())) redirect("/admin");
+  if (!commerceBackendConfigured()) redirect("/admin/products?error=backend");
+}
+
+export async function createProduct(formData: FormData) {
+  await requireAdmin();
+  const supabase = getSupabaseAdmin();
+  const name = text(formData, "name");
+  const slug = slugify(text(formData, "slug") || name);
+  const price = Number(text(formData, "price"));
+  const stock = Number(text(formData, "stock"));
+  const oldPriceRaw = text(formData, "oldPrice");
+
+  if (!name || !slug || !Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
+    redirect("/admin/products?error=invalid");
+  }
+
+  const { data: latest } = await supabase.from("products").select("external_id").order("external_id", { ascending: false }).limit(1).maybeSingle();
+  const externalId = Number(latest?.external_id || 0) + 1;
+
+  const { error } = await supabase.from("products").insert({
+    external_id: externalId,
+    slug,
+    name,
+    brand: text(formData, "brand") || "TechMan AMT",
+    category: text(formData, "category") || "Gadgets",
+    price_ngn: Math.round(price),
+    old_price_ngn: oldPriceRaw ? Math.round(Number(oldPriceRaw)) : null,
+    stock,
+    image_url: text(formData, "image"),
+    blurb: text(formData, "blurb"),
+    badge: text(formData, "badge") || null,
+    warranty: text(formData, "warranty") || null,
+    condition: text(formData, "condition") || "New",
+    active: true,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) redirect(`/admin/products?error=${encodeURIComponent(error.message)}`);
+  revalidatePath("/admin");
+  revalidatePath("/admin/products");
+  revalidatePath("/");
+  redirect("/admin/products?success=created");
+}
+
+export async function updateProduct(formData: FormData) {
+  await requireAdmin();
+  const supabase = getSupabaseAdmin();
+  const id = text(formData, "id");
+  const price = Number(text(formData, "price"));
+  const stock = Number(text(formData, "stock"));
+  const oldPriceRaw = text(formData, "oldPrice");
+
+  const { error } = await supabase.from("products").update({
+    name: text(formData, "name"),
+    brand: text(formData, "brand"),
+    category: text(formData, "category"),
+    price_ngn: Math.round(price),
+    old_price_ngn: oldPriceRaw ? Math.round(Number(oldPriceRaw)) : null,
+    stock,
+    image_url: text(formData, "image"),
+    blurb: text(formData, "blurb"),
+    badge: text(formData, "badge") || null,
+    warranty: text(formData, "warranty") || null,
+    condition: text(formData, "condition") || "New",
+    active: formData.get("active") === "on",
+    updated_at: new Date().toISOString(),
+  }).eq("id", id);
+
+  if (error) redirect(`/admin/products?error=${encodeURIComponent(error.message)}`);
+  revalidatePath("/admin");
+  revalidatePath("/admin/products");
+  revalidatePath("/");
+  redirect("/admin/products?success=updated");
+}
+
+export async function deleteProduct(formData: FormData) {
+  await requireAdmin();
+  const supabase = getSupabaseAdmin();
+  const id = text(formData, "id");
+  await supabase.from("products").delete().eq("id", id);
+  revalidatePath("/admin");
+  revalidatePath("/admin/products");
+  revalidatePath("/");
+  redirect("/admin/products?success=deleted");
+}
