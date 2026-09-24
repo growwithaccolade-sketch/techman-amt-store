@@ -3,6 +3,8 @@ import { CartProvider } from "@/components/cart-provider";
 import { getStoreCatalog } from "@/lib/catalog";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techmanamt.example";
 
 export const metadata: Metadata = {
