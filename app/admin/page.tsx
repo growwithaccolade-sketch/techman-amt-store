@@ -4,6 +4,7 @@ import AdminNav from "@/components/admin-nav";
 import { getAdminSession, hasAdminSession, loginAdmin } from "./actions";
 import { getAdminMetrics } from "@/lib/admin-data";
 import { money } from "@/lib/products";
+import BrandLogo from "@/components/brand-logo";
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
@@ -13,7 +14,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     return (
       <main className="adminLogin">
         <div className="adminLoginCard">
-          <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
+          <BrandLogo/>
           <span className="kicker">PRIVATE ADMIN</span>
           <h1>Store control starts here.</h1>
           <p>Sign in to manage products, pages, orders, staff and store settings.</p>
