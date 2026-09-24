@@ -136,12 +136,12 @@ export default function CheckoutClient() {
   }
 
   if (!items.length) {
-    return <section className="emptyCart shell"><h1>Nothing to check out yet.</h1><p>Add products to your cart first.</p><Link className="primaryBtn" href="/#shop">Browse products</Link></section>;
+    return <section className="emptyCart shell"><h1>Nothing to check out yet.</h1><p>Add products to your cart first.</p><Link className="primaryBtn" href="/shop">Browse products</Link></section>;
   }
 
   return (
     <section className="checkoutPage shell">
-      <div className="pageIntro"><span className="kicker">CHECKOUT</span><h1>Simple, clear, secure.</h1><p>Enter your details, check delivery, apply a valid offer and choose secure online payment or assisted WhatsApp ordering.</p></div>
+      <div className="pageIntro"><span className="kicker">CHECKOUT</span><h1>Checkout.</h1><p>Enter delivery details, confirm the delivery fee and choose your payment method.</p></div>
       <form className="checkoutLayout" onSubmit={submit}>
         <div className="checkoutForm">
           <div className="formSection"><h2>Contact</h2><label>Full name<input name="name" required autoComplete="name"/></label><div className="fieldGrid"><label>Phone number<input name="phone" required inputMode="tel"/></label><label>Email<input name="email" type="email" required autoComplete="email"/></label></div></div>
@@ -152,13 +152,13 @@ export default function CheckoutClient() {
           </div>
 
           <div className="couponBox">
-            <div className="couponTitle"><TicketPercent size={18}/><span><b>Have a coupon?</b><small>Discounts are rechecked on the server before payment starts.</small></span></div>
+            <div className="couponTitle"><TicketPercent size={18}/><span><b>Coupon</b><small>Enter a valid promotion code.</small></span></div>
             <div className="couponApply"><input value={couponCode} onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setAppliedCoupon(null); setDeliveryQuote(null); }} placeholder="Enter code"/><button type="button" onClick={applyCoupon} disabled={!couponCode.trim() || couponState === "checking"}>{couponState === "checking" ? "Checking..." : "Apply"}</button></div>
             {appliedCoupon && <div className="couponSuccess"><Check size={15}/>{appliedCoupon.message}</div>}
             {couponState === "error" && <div className="couponError">{couponMessage}</div>}
           </div>
 
-          <div className="secureNote"><LockKeyhole size={18}/><span><b>Your payment key never enters the browser.</b><small>Online transactions are initialized on the server and completed on Paystack&apos;s secure checkout. Final delivery and coupon amounts are recalculated server-side.</small></span></div>
+          <div className="secureNote"><LockKeyhole size={18}/><span><b>Secure payment</b><small>Online card and bank payments are completed on Paystack.</small></span></div>
           {error && <div className="checkoutError">{error}</div>}
         </div>
 
@@ -171,7 +171,7 @@ export default function CheckoutClient() {
           <div className="summaryTotal"><span>Estimated total</span><strong>{money(total)}</strong></div>
           <button className="primaryAction" name="intent" value="online" type="submit" disabled={loading}><CreditCard size={18}/>{loading ? "Starting secure payment..." : "Pay securely online"}</button>
           <button className="whatsappCheckout" name="intent" value="whatsapp" type="submit"><MessageCircle size={18}/> Order on WhatsApp</button>
-          <small>The payment server recalculates price, discount, stock and delivery before creating the Paystack transaction.</small>
+          <small>Product price, discount, stock and delivery are confirmed before payment starts.</small>
         </aside>
       </form>
     </section>
