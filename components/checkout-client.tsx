@@ -4,14 +4,14 @@ import { FormEvent, useMemo, useState } from "react";
 import Link from "next/link";
 import { CreditCard, LockKeyhole, MessageCircle } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
-import { money, products } from "@/lib/products";
+import { money } from "@/lib/products";
 import { whatsappUrl } from "@/lib/site";
 
 export default function CheckoutClient() {
-  const { lines } = useCart();
+  const { catalog, lines } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const items = useMemo(() => lines.map((line) => ({ line, product: products.find((p) => p.id === line.id) })).filter((x) => x.product), [lines]);
+  const items = useMemo(() => lines.map((line) => ({ line, product: catalog.find((p) => p.id === line.id) })).filter((x) => x.product), [catalog, lines]);
   const subtotal = items.reduce((sum, item) => sum + (item.product?.price || 0) * item.line.qty, 0);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
