@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { hasAdminSession } from "@/app/admin/actions";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
+import { sendOrderStatusEmail } from "@/lib/order-status-email";
 
 export async function updateOrder(formData: FormData) {
   if (!(await hasAdminSession())) redirect("/admin");
@@ -16,6 +17,8 @@ export async function updateOrder(formData: FormData) {
   if (!allowed.includes(status)) redirect("/admin/orders?error=invalid");
 
   const supabase = getSupabaseAdmin();
+  const { data: existing } = await supabase.from("orders").select("reference,email,customer_name,status").eq("id", id).maybeSingle();
+
   const { error } = await supabase.from("orders").update({
     status,
     admin_note: adminNote || null,
@@ -23,6 +26,16 @@ export async function updateOrder(formData: FormData) {
   }).eq("id", id);
 
   if (error) redirect(`/admin/orders?error=${encodeURIComponent(error.message)}`);
+
+  if (existing && existing.status !== status) {
+    await sendOrderStatusEmail({
+      reference: existing.reference,
+      email: existing.email,
+      customerName: existing.customer_name,
+      status,
+    });
+  }
+
   revalidatePath("/admin");
   revalidatePath("/admin/orders");
   redirect("/admin/orders?success=updated");
