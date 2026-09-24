@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { BarChart3, Boxes, FileText, LayoutDashboard, LogOut, Megaphone, MessageSquare, Package, Settings, ShoppingCart, Star, TicketPercent, Truck, UserCog, Users } from "lucide-react";
 import { logoutAdmin } from "@/app/admin/actions";
+import BrandLogo from "@/components/brand-logo";
 
 export default function AdminNav({ active }: { active: "overview" | "products" | "orders" | "inventory" | "customers" | "analytics" | "settings" | "leads" | "promotions" | "reviews" | "delivery" | "marketing" | "staff" | "pages" }) {
   return (
     <aside className="adminSidebar">
-      <Link href="/" className="brand footerBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
+      <BrandLogo light/>
       <nav>
         <Link className={active === "overview" ? "active" : ""} href="/admin"><LayoutDashboard size={18}/> Overview</Link>
         <Link className={active === "products" ? "active" : ""} href="/admin/products"><Package size={18}/> Products</Link>
