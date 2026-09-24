@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
 import { verifyPaystackTransaction } from "@/lib/paystack";
+import { sendPaidOrderConfirmation } from "@/lib/order-email";
 
 export async function GET(_: Request, { params }: { params: Promise<{ reference: string }> }) {
   if (!commerceBackendConfigured() || !process.env.PAYSTACK_SECRET_KEY) {
@@ -27,6 +28,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ reference:
       if (paidError) {
         return NextResponse.json({ error: "Payment was verified but order finalization needs attention." }, { status: 500 });
       }
+      await sendPaidOrderConfirmation(reference);
     }
 
     return NextResponse.json({ paid, reference, status: transaction.status, amountMatches });
