@@ -7,9 +7,10 @@ import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
 
 export default function CartPageClient() {
-  const { catalog, lines, setQty, removeItem } = useCart();
+  const { catalog, settings, lines, setQty, removeItem } = useCart();
   const items = lines.map((line) => ({ line, product: catalog.find((p) => p.id === line.id) })).filter((item) => item.product);
   const subtotal = items.reduce((sum, item) => sum + (item.product?.price || 0) * item.line.qty, 0);
+  const freeDeliveryRemaining = settings.freeDeliveryThreshold ? Math.max(settings.freeDeliveryThreshold - subtotal, 0) : null;
 
   if (!items.length) {
     return <section className="emptyCart shell"><ShoppingBag size={44}/><h1>Your cart is empty.</h1><p>Start with the tech you actually need, then build your setup from there.</p><Link className="primaryBtn" href="/#shop">Shop latest tech</Link></section>;
@@ -41,7 +42,7 @@ export default function CartPageClient() {
         <aside className="orderSummary">
           <span className="kicker">ORDER SUMMARY</span>
           <div><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
-          <div><span>Delivery</span><span>Calculated at checkout</span></div>
+          <div><span>Delivery</span><span>{settings.freeDeliveryThreshold && subtotal >= settings.freeDeliveryThreshold ? "Free delivery offer unlocked" : "Calculated at checkout"}</span></div>{freeDeliveryRemaining !== null && freeDeliveryRemaining > 0 && <div className="deliveryProgress"><span>Add {money(freeDeliveryRemaining)} more to reach the configured free-delivery threshold.</span><div><i style={{width: `${Math.min(100, (subtotal / settings.freeDeliveryThreshold!) * 100)}%`}}/></div></div>}
           <div className="summaryTotal"><span>Total before delivery</span><strong>{money(subtotal)}</strong></div>
           <Link className="primaryBtn checkoutBtn" href="/checkout">Continue to checkout</Link>
           <small>No hidden product fees. Delivery is confirmed before you complete your order.</small>
