@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { ArrowRight, Check, ChevronRight, Heart, Menu, Search, ShieldCheck, ShoppingBag, Sparkles, Star, Truck, X, Zap } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
-import { whatsappUrl } from "@/lib/site";
+import { makeWhatsappUrl } from "@/lib/site";
 
 const categories = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
 
@@ -15,8 +15,8 @@ export default function Storefront() {
   const [category, setCategory] = useState("All");
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { catalog, lines, totalItems, addItem } = useCart();
-  const supportLink = whatsappUrl("Hello TechMan AMT, I need help choosing the right tech product.");
+  const { catalog, settings, lines, totalItems, addItem } = useCart();
+  const supportLink = makeWhatsappUrl(settings.whatsappNumber, "Hello TechMan AMT, I need help choosing the right tech product.");
 
   const visibleProducts = useMemo(() => catalog.filter((p) => {
     const inCategory = category === "All" || p.category === category;
@@ -29,7 +29,7 @@ export default function Storefront() {
 
   return (
     <main>
-      <div className="announcement"><span>⚡ Hot tech deals live now</span><span>Nationwide delivery across Nigeria</span><span>Secure checkout + human support</span></div>
+      <div className="announcement"><span>⚡ {settings.announcementText}</span><span>Nationwide delivery across Nigeria</span><span>Secure checkout + human support</span></div>
       <header className="nav shell">
         <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
         <nav className="desktopNav"><a href="#shop">Shop</a><a href="#deals">Deals</a><a href="#creator">Creator Tools</a><a href="#insights">Tech Insights</a></nav>
