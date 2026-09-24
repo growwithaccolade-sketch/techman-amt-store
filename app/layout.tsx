@@ -1,10 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { CartProvider } from "@/components/cart-provider";
 import { getStoreCatalog } from "@/lib/catalog";
 import { getStoreSettings } from "@/lib/store-settings";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#090b10",
+};
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://techmanamt.example";
 
