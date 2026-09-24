@@ -25,7 +25,8 @@ import {
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
 import { makeWhatsappUrl } from "@/lib/site";
-import NewsletterForm from "@/components/newsletter-form";\nimport ProductImage from "@/components/product-image";
+import NewsletterForm from "@/components/newsletter-form";
+import ProductImage from "@/components/product-image";
 
 const categoryMeta = [
   { name: "Phones", copy: "Flagships, everyday performers and camera-first picks.", icon: Smartphone },
