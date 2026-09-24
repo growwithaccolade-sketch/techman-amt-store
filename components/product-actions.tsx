@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { Check, MessageCircle, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
-import { whatsappUrl } from "@/lib/site";
+import { makeWhatsappUrl } from "@/lib/site";
 
 export default function ProductActions({ id, name, price }: { id: number; name: string; price: string }) {
-  const { addItem } = useCart();
+  const { addItem, settings } = useCart();
   const [added, setAdded] = useState(false);
-  const wa = whatsappUrl(`Hello TechMan AMT, I'm interested in ${name} listed at ${price}. Is it available?`);
+  const wa = makeWhatsappUrl(settings.whatsappNumber, `Hello TechMan AMT, I'm interested in ${name} listed at ${price}. Is it available?`);
 
   const handleAdd = () => {
     addItem(id);
