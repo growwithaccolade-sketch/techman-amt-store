@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 const brandPalettes: Record<string, [string, string, string]> = {
@@ -48,9 +47,7 @@ function ProductFallback({ alt, brand }: { alt: string; brand?: string }) {
     >
       <div className="productArtworkGlow"/>
       <div className="productArtworkBrand">{brand || "TechMan AMT"}</div>
-      <div className="productArtworkGlyph" aria-hidden="true">
-        <span>{initials}</span>
-      </div>
+      <div className="productArtworkGlyph" aria-hidden="true"><span>{initials}</span></div>
       <div className="productArtworkCopy">
         <strong>{alt}</strong>
         <span>TechMan AMT</span>
@@ -64,7 +61,6 @@ export default function ProductImage({
   alt,
   brand,
   className,
-  sizes = "(max-width: 760px) 92vw, 33vw",
   priority = false,
 }: {
   src: string;
@@ -75,25 +71,31 @@ export default function ProductImage({
   priority?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setFailed(false);
+    setLoaded(false);
   }, [src]);
 
-  if (!src || failed) {
-    return <ProductFallback alt={alt} brand={brand}/>;
-  }
+  if (!src) return <ProductFallback alt={alt} brand={brand}/>;
 
   return (
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      sizes={sizes}
-      priority={priority}
-      quality={76}
-      className={className}
-      onError={() => setFailed(true)}
-    />
+    <div className="productImageStack">
+      <ProductFallback alt={alt} brand={brand}/>
+      {!failed && (
+        <img
+          src={src}
+          alt={alt}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
+          referrerPolicy="no-referrer"
+          className={`productRemoteImage ${loaded ? "isLoaded" : ""} ${className || ""}`}
+          onLoad={() => setLoaded(true)}
+          onError={() => setFailed(true)}
+        />
+      )}
+    </div>
   );
 }
