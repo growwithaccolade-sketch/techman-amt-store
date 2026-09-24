@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Heart, Menu, Scale, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 
 export default function CommerceHeader() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const { totalItems, wishlist, compare, settings } = useCart();
 
   return (
@@ -20,11 +22,11 @@ export default function CommerceHeader() {
         <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
 
         <nav className="desktopNav premiumDesktopNav">
-          <Link href="/">Home</Link>
-          <Link href="/shop">Shop</Link>
+          <Link className={pathname === "/" ? "current" : ""} aria-current={pathname === "/" ? "page" : undefined} href="/">Home</Link>
+          <Link className={pathname.startsWith("/shop") || pathname.startsWith("/product") ? "current" : ""} aria-current={pathname.startsWith("/shop") ? "page" : undefined} href="/shop">Shop</Link>
           <Link href="/#collections">Collections</Link>
-          <Link href="/blog">Guides</Link>
-          <Link href="/contact">Contact</Link>
+          <Link className={pathname.startsWith("/blog") ? "current" : ""} aria-current={pathname.startsWith("/blog") ? "page" : undefined} href="/blog">Guides</Link>
+          <Link className={pathname === "/contact" ? "current" : ""} aria-current={pathname === "/contact" ? "page" : undefined} href="/contact">Contact</Link>
         </nav>
 
         <div className="navActions premiumNavActions">
