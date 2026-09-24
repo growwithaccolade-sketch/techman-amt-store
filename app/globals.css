@@ -2075,3 +2075,10 @@ body{background:#fff}
   .dealFeatureMedia{width:88px;height:72px}
   .dealFeatureItem{grid-template-columns:24px 88px 1fr auto}
 }
+
+/* Final wordmark cleanup */
+.premiumBrand .brandMark{display:none}
+.premiumBrand{gap:0;font-size:13px;font-weight:780;letter-spacing:.11em}
+.premiumBrand b{font-weight:780;color:inherit}
+.premiumBrand span:last-child{display:inline-flex;gap:.38em}
+.premiumBrand span:last-child b{color:#2563eb}
