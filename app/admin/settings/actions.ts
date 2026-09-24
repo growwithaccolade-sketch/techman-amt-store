@@ -12,6 +12,9 @@ export async function updateStoreSettings(formData: FormData) {
   const supportEmail = String(formData.get("supportEmail") || "").trim();
   const whatsappNumber = String(formData.get("whatsappNumber") || "").replace(/[^0-9+]/g, "").trim();
   const announcementText = String(formData.get("announcementText") || "").trim() || "Better tech, smarter upgrades.";
+  const locationLabel = String(formData.get("locationLabel") || "").trim();
+  const footerCreditLabel = String(formData.get("footerCreditLabel") || "").trim();
+  const footerCreditUrl = String(formData.get("footerCreditUrl") || "").trim();
   const thresholdRaw = String(formData.get("freeDeliveryThreshold") || "").trim();
   const threshold = thresholdRaw ? Number(thresholdRaw) : null;
 
@@ -27,6 +30,9 @@ export async function updateStoreSettings(formData: FormData) {
     whatsapp_number: whatsappNumber || null,
     announcement_text: announcementText,
     free_delivery_threshold_ngn: threshold === null ? null : Math.round(threshold),
+    location_label: locationLabel || null,
+    footer_credit_label: footerCreditLabel || "Built by Mike Accolade",
+    footer_credit_url: footerCreditUrl || "https://mikeaccolade.xyz",
     updated_at: new Date().toISOString(),
   }, { onConflict: "id" });
 
