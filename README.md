@@ -4,6 +4,15 @@ Premium Next.js ecommerce foundation for phones, laptops, gadgets, creator tools
 
 ## What is implemented
 
+- Live Supabase-backed catalog with demo fallback
+- Admin product CRUD, stock control and visibility toggles
+- Admin order fulfilment and internal notes
+- Admin sales-lead inbox for trade-ins, sourcing requests and bulk quotes
+- Editable public store settings for WhatsApp, email, announcement and delivery threshold
+- Full shop, category, brand and search routes
+- Trade-in, device request and corporate quote forms
+- Tech Insights buying-guide blog
+
 - Premium responsive storefront
 - Product search and category filtering
 - Individual product detail pages
@@ -63,16 +72,15 @@ Create a Supabase project, then run:
 
 ```
 supabase/migrations/001_commerce.sql
+supabase/migrations/002_admin_catalog.sql
+supabase/migrations/003_idempotent_inventory.sql
+supabase/migrations/004_store_settings.sql
+supabase/migrations/005_sales_leads.sql
 ```
 
 in the Supabase SQL editor or through your migration workflow.
 
-The migration creates:
-
-- products
-- orders
-- order_items
-- inventory_movements
+The migrations create the product catalog, orders, order items, inventory movements, editable store settings and sales lead inbox. Migration 003 also adds idempotent paid-order inventory handling so repeated payment callbacks cannot double-decrement stock.
 
 RLS is enabled. Public clients only receive read access to active products. Order and inventory access is intentionally kept server-side.
 
@@ -132,3 +140,4 @@ The project is structured for Vercel. Import this GitHub repository into Vercel,
 5. Confirm the payment callback and webhook work end-to-end.
 6. Replace demo catalog data with verified inventory and specifications.
 7. Upgrade staff authentication to Supabase Auth before giving multiple staff members admin access.
+8. Optionally run `supabase/seed.sql` to load the starter catalog into a new database.
