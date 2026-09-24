@@ -10,7 +10,7 @@ export const fallbackStoreSettings: StoreSettings = {
   storeName: "TechMan AMT",
   supportEmail: process.env.NEXT_PUBLIC_STORE_EMAIL || "",
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "",
-  announcementText: "Better tech, smarter upgrades.",
+  announcementText: "Phones, laptops, audio and creator tools.",
   freeDeliveryThreshold: null,
 };
 
