@@ -1,9 +1,10 @@
 "use server";
 
-import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
+import { verifyAdminPassword } from "@/lib/admin-auth";
 
 const COOKIE_NAME = "techman_admin_session";
 const OWNER_USERNAME = process.env.ADMIN_USERNAME || "admin";
@@ -32,25 +33,6 @@ function ownerPasswordValid(password: string) {
     );
   }
   return verifyAdminPassword(password, FALLBACK_OWNER_HASH);
-}
-
-export function hashAdminPassword(password: string) {
-  const salt = randomBytes(16);
-  const derived = scryptSync(password, salt, 64);
-  return `${salt.toString("hex")}:${derived.toString("hex")}`;
-}
-
-export function verifyAdminPassword(password: string, stored: string) {
-  const [saltHex, hashHex] = stored.split(":");
-  if (!saltHex || !hashHex) return false;
-  try {
-    const salt = Buffer.from(saltHex, "hex");
-    const expected = Buffer.from(hashHex, "hex");
-    const actual = scryptSync(password, salt, expected.length);
-    return actual.length === expected.length && timingSafeEqual(actual, expected);
-  } catch {
-    return false;
-  }
 }
 
 function sessionSecret() {
