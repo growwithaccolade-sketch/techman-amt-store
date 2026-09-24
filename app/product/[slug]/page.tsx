@@ -5,7 +5,7 @@ import { Check, PackageCheck, ShieldCheck, Star, Truck } from "lucide-react";
 import { notFound } from "next/navigation";
 import CommerceHeader from "@/components/commerce-header";
 import ProductActions from "@/components/product-actions";
-import ReviewForm from "@/components/review-form";
+import ReviewForm from "@/components/review-form";\nimport ProductImage from "@/components/product-image";
 import { getStoreCatalog, getStoreProduct } from "@/lib/catalog";
 import { money, products as demoProducts } from "@/lib/products";
 import { getApprovedReviews } from "@/lib/reviews";
@@ -64,9 +64,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <CommerceHeader/>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}/>
       <main className="productPage shell">
-        <div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/#shop">{product.category}</Link><span>/</span><b>{product.name}</b></div>
+        <div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/shop">{product.category}</Link><span>/</span><b>{product.name}</b></div>
         <section className="productHero">
-          <div className="productGallery"><Image src={product.image} alt={product.name} width={1000} height={1000} priority unoptimized/></div>
+          <div className="productGallery"><ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="(max-width: 760px) 94vw, 52vw" priority/></div>
           <div className="productDetail">
             <span className="brandName">{product.brand} · {product.condition}</span>
             <h1>{product.name}</h1>
@@ -82,12 +82,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </section>
 
         <section className="specSection">
-          <div><span className="kicker">BUY WITH CONTEXT</span><h2>What you should know.</h2><p>Clear essentials before you spend. Final package contents and exact regional specifications should be confirmed before payment.</p></div>
+          <div><span className="kicker">SPECIFICATIONS</span><h2>Product details.</h2><p>Confirm final package contents and regional specifications before payment.</p></div>
           <div className="specTable">{Object.keys(product.specs).length ? Object.entries(product.specs).map(([key, value]) => <div key={key}><span>{key}</span><strong>{value}</strong></div>) : <div><span>Product details</span><strong>Ask TechMan AMT for full specifications</strong></div>}</div>
         </section>
 
         <section className="reviewsSection">
-          <div className="sectionHead"><div><span className="kicker">CUSTOMER REVIEWS</span><h2>Verified purchase feedback.</h2></div><p>Reviews only appear after a paid order is matched to this product and the submission is approved.</p></div>
+          <div className="sectionHead"><div><span className="kicker">REVIEWS</span><h2>Verified purchases.</h2></div><p>Published reviews are matched to paid orders.</p></div>
           <div className="reviewsLayout">
             <div className="reviewList">
               {reviews.length ? reviews.map((review) => <article className="reviewCard" key={review.id}>
@@ -95,13 +95,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                 {review.title && <h3>{review.title}</h3>}
                 <p>{review.body}</p>
                 <small>{review.displayName} · {new Date(review.createdAt).toLocaleDateString("en-NG")}</small>
-              </article>) : <div className="reviewEmpty"><h3>No approved reviews yet.</h3><p>Be among the first verified buyers to leave useful feedback.</p></div>}
+              </article>) : <div className="reviewEmpty"><h3>No reviews yet.</h3><p>Verified buyers can submit a review after purchase.</p></div>}
             </div>
             <ReviewForm productId={product.id} productName={product.name}/>
           </div>
         </section>
 
-        {related.length > 0 && <section className="relatedSection"><div className="sectionHead"><div><span className="kicker">KEEP LOOKING</span><h2>More in {product.category}.</h2></div></div><div className="relatedGrid">{related.map((item) => <Link className="relatedCard" key={item.id} href={`/product/${item.slug}`}><Image src={item.image} alt={item.name} width={520} height={420} unoptimized/><span className="brandName">{item.brand}</span><h3>{item.name}</h3><strong>{money(item.price)}</strong></Link>)}</div></section>}
+        {related.length > 0 && <section className="relatedSection"><div className="sectionHead"><div><span className="kicker">RELATED</span><h2>More in {product.category}.</h2></div></div><div className="relatedGrid">{related.map((item) => <Link className="relatedCard" key={item.id} href={`/product/${item.slug}`}><div className="relatedImageWrap"><ProductImage src={item.image} alt={item.name} brand={item.brand} sizes="(max-width: 760px) 94vw, 30vw"/></div><span className="brandName">{item.brand}</span><h3>{item.name}</h3><strong>{money(item.price)}</strong></Link>)}</div></section>}
       </main>
     </>
   );
