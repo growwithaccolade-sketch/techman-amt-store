@@ -3,96 +3,404 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, Check, ChevronRight, Heart, Menu, Search, ShieldCheck, ShoppingBag, Sparkles, Star, Truck, UserRound, X, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BadgeCheck,
+  Check,
+  Headphones,
+  Heart,
+  Laptop,
+  Menu,
+  Mic2,
+  Search,
+  ShieldCheck,
+  ShoppingBag,
+  Smartphone,
+  Sparkles,
+  Truck,
+  UserRound,
+  X,
+  Zap,
+} from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
 import { makeWhatsappUrl } from "@/lib/site";
 import NewsletterForm from "@/components/newsletter-form";
 
-const categories = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
+const categoryMeta = [
+  { name: "Phones", copy: "Flagships, everyday performers and camera-first picks.", icon: Smartphone },
+  { name: "Laptops", copy: "Work, study and creative machines that fit the job.", icon: Laptop },
+  { name: "Creator Tools", copy: "Audio, lighting and gear for better content.", icon: Mic2 },
+  { name: "Audio", copy: "Headphones, speakers and focused listening.", icon: Headphones },
+  { name: "Accessories", copy: "Power, productivity and the useful extras.", icon: Zap },
+];
+
+const filters = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
 
 export default function Storefront() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [mobileOpen, setMobileOpen] = useState(false);
   const { catalog, settings, lines, wishlist, totalItems, addItem, toggleWishlist } = useCart();
-  const supportLink = makeWhatsappUrl(settings.whatsappNumber, "Hello TechMan AMT, I need help choosing the right tech product.");
 
-  const visibleProducts = useMemo(() => catalog.filter((p) => {
-    const inCategory = category === "All" || p.category === category;
-    const q = query.toLowerCase().trim();
-    const matches = !q || `${p.name} ${p.brand} ${p.category}`.toLowerCase().includes(q);
-    return inCategory && matches;
-  }), [catalog, query, category]);
+  const supportLink = makeWhatsappUrl(
+    settings.whatsappNumber,
+    "Hello TechMan AMT, I need help choosing the right tech product."
+  );
+
+  const visibleProducts = useMemo(
+    () =>
+      catalog.filter((product) => {
+        const inCategory = category === "All" || product.category === category;
+        const q = query.toLowerCase().trim();
+        const matches =
+          !q ||
+          `${product.name} ${product.brand} ${product.category} ${product.blurb}`
+            .toLowerCase()
+            .includes(q);
+        return inCategory && matches;
+      }),
+    [catalog, query, category]
+  );
+
+  const heroProducts = catalog.slice(0, 3);
+  const primaryHero = heroProducts[0];
+  const secondaryHero = heroProducts[1];
+  const tertiaryHero = heroProducts[2];
+
+  const productForCategory = (name: string) =>
+    catalog.find((product) => product.category === name) || catalog[0];
 
   return (
-    <main>
-      <div className="announcement"><span>⚡ {settings.announcementText}</span><span>Nationwide delivery across Nigeria</span><span>Secure checkout + human support</span></div>
-      <header className="nav shell">
-        <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
-        <nav className="desktopNav"><Link href="/shop">Shop</Link><a href="#deals">Deals</a><a href="#creator">Creator Tools</a><Link href="/blog">Tech Insights</Link></nav>
-        <div className="navActions"><button className="iconBtn" aria-label="Search" onClick={() => document.getElementById("shop")?.scrollIntoView({behavior:"smooth"})}><Search size={19}/></button><Link className="iconBtn" aria-label="Account" href="/account"><UserRound size={19}/></Link><Link className="iconBtn badgeWrap" aria-label="Wishlist" href="/wishlist"><Heart size={19}/>{wishlist.length > 0 && <span className="count">{wishlist.length}</span>}</Link><Link className="cartBtn" href="/cart"><ShoppingBag size={18}/> Cart <span>{totalItems}</span></Link><button className="menuBtn" onClick={() => setMobileOpen(true)} aria-label="Open menu"><Menu/></button></div>
+    <main className="siteFrame">
+      <div className="announcement premiumAnnouncement">
+        <span>{settings.announcementText || "Better tech. Smarter upgrades."}</span>
+        <span className="announcementDesktop">Nationwide delivery · Secure checkout · Human support</span>
+      </div>
+
+      <header className="nav shell premiumNav">
+        <Link href="/" className="brand premiumBrand">
+          <span className="brandMark">T</span>
+          <span>TECHMAN <b>AMT</b></span>
+        </Link>
+
+        <nav className="desktopNav premiumDesktopNav">
+          <Link href="/shop">Shop</Link>
+          <a href="#collections">Collections</a>
+          <a href="#featured">Featured</a>
+          <Link href="/blog">Guides</Link>
+          <Link href="/corporate">Bulk Orders</Link>
+        </nav>
+
+        <div className="navActions premiumNavActions">
+          <button
+            className="iconBtn navSearchButton"
+            aria-label="Search products"
+            onClick={() => document.getElementById("featured")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            <Search size={18}/>
+          </button>
+          <Link className="iconBtn" aria-label="Account" href="/account"><UserRound size={18}/></Link>
+          <Link className="iconBtn badgeWrap" aria-label="Wishlist" href="/wishlist">
+            <Heart size={18}/>
+            {wishlist.length > 0 && <span className="count">{wishlist.length}</span>}
+          </Link>
+          <Link className="cartBtn premiumCartBtn" href="/cart">
+            <ShoppingBag size={17}/>
+            <span className="cartLabel">Cart</span>
+            <em>{totalItems}</em>
+          </Link>
+          <button className="menuBtn" onClick={() => setMobileOpen(true)} aria-label="Open menu"><Menu/></button>
+        </div>
       </header>
 
-      {mobileOpen && <div className="mobileMenu"><button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button><Link href="/shop" onClick={()=>setMobileOpen(false)}>Shop</Link><a href="#deals" onClick={()=>setMobileOpen(false)}>Deals</a><a href="#creator" onClick={()=>setMobileOpen(false)}>Creator Tools</a><Link href="/blog" onClick={()=>setMobileOpen(false)}>Tech Insights</Link><Link href="/account" onClick={()=>setMobileOpen(false)}>Account</Link><Link href="/wishlist" onClick={()=>setMobileOpen(false)}>Wishlist ({wishlist.length})</Link><Link href="/cart" onClick={()=>setMobileOpen(false)}>Cart ({totalItems})</Link></div>}
-
-      <section className="hero shell">
-        <div className="heroCopy">
-          <div className="eyebrow"><Sparkles size={15}/> Tech worth your money</div>
-          <h1>Better tech.<br/><span>Smarter upgrades.</span></h1>
-          <p>Original phones, laptops, creator gear and everyday gadgets selected to help you work smarter, create better and stay connected.</p>
-          <div className="heroCtas"><a className="primaryBtn" href="#shop">Shop latest tech <ArrowRight size={18}/></a><a className="secondaryBtn" href="#deals">See today&apos;s deals</a></div>
-          <div className="trustMini"><span><Check size={15}/> Clear product condition</span><span><Check size={15}/> Secure buying flow</span><span><Check size={15}/> Human support</span></div>
+      {mobileOpen && (
+        <div className="mobileMenu premiumMobileMenu">
+          <div className="mobileMenuTop">
+            <Link href="/" className="brand premiumBrand" onClick={() => setMobileOpen(false)}>
+              <span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span>
+            </Link>
+            <button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button>
+          </div>
+          <nav>
+            <Link href="/shop" onClick={() => setMobileOpen(false)}>Shop <ArrowUpRight/></Link>
+            <a href="#collections" onClick={() => setMobileOpen(false)}>Collections <ArrowUpRight/></a>
+            <Link href="/blog" onClick={() => setMobileOpen(false)}>Buying Guides <ArrowUpRight/></Link>
+            <Link href="/trade-in" onClick={() => setMobileOpen(false)}>Trade In <ArrowUpRight/></Link>
+            <Link href="/corporate" onClick={() => setMobileOpen(false)}>Bulk Orders <ArrowUpRight/></Link>
+          </nav>
+          <div className="mobileMenuUtilities">
+            <Link href="/account" onClick={() => setMobileOpen(false)}>Account</Link>
+            <Link href="/wishlist" onClick={() => setMobileOpen(false)}>Wishlist ({wishlist.length})</Link>
+            <Link href="/track-order" onClick={() => setMobileOpen(false)}>Track Order</Link>
+          </div>
         </div>
-        <div className="heroVisual">
-          <div className="glow"></div>
-          <Image className="heroImage" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=90" alt="Premium smartphone" width={900} height={900} priority />
-          <div className="floatingCard top"><span>NEW DROP</span><strong>Flagship phones</strong><small>Built for camera, speed and all-day use</small></div>
-          <div className="floatingCard bottom"><Zap size={18}/><div><strong>Nationwide delivery</strong><small>Confirm delivery before payment</small></div></div>
+      )}
+
+      <section className="premiumHero shell">
+        <div className="premiumHeroCopy">
+          <div className="heroOverline"><Sparkles size={14}/> CURATED TECH FOR REAL LIFE</div>
+          <h1>Better tech.<br/><span>Less guesswork.</span></h1>
+          <p>
+            Phones, laptops, creator gear and everyday gadgets selected around
+            how you actually work, create and live.
+          </p>
+          <div className="premiumHeroCtas">
+            <Link className="primaryBtn heroPrimary" href="/shop">Shop the collection <ArrowRight size={17}/></Link>
+            <Link className="textCta" href="/device-request">Can’t find it? Request it <ArrowUpRight size={16}/></Link>
+          </div>
+          <div className="heroProof">
+            <span><BadgeCheck size={16}/> Clear condition & warranty</span>
+            <span><Truck size={16}/> Delivery across Nigeria</span>
+            <span><ShieldCheck size={16}/> Secure checkout</span>
+          </div>
+        </div>
+
+        <div className="heroStage">
+          {primaryHero && (
+            <Link href={`/product/${primaryHero.slug}`} className="heroStageMain">
+              <div className="heroStageBadge">FEATURED</div>
+              <Image src={primaryHero.image} alt={primaryHero.name} fill sizes="(max-width: 900px) 92vw, 46vw" priority unoptimized/>
+              <div className="heroStageOverlay">
+                <span>{primaryHero.brand}</span>
+                <strong>{primaryHero.name}</strong>
+                <b>{money(primaryHero.price)}</b>
+              </div>
+            </Link>
+          )}
+
+          <div className="heroStageRail">
+            {secondaryHero && (
+              <Link href={`/product/${secondaryHero.slug}`} className="heroMiniCard">
+                <Image src={secondaryHero.image} alt={secondaryHero.name} fill sizes="220px" unoptimized/>
+                <div><span>{secondaryHero.category}</span><strong>{secondaryHero.name}</strong></div>
+              </Link>
+            )}
+            {tertiaryHero && (
+              <Link href={`/product/${tertiaryHero.slug}`} className="heroMiniCard">
+                <Image src={tertiaryHero.image} alt={tertiaryHero.name} fill sizes="220px" unoptimized/>
+                <div><span>{tertiaryHero.category}</span><strong>{tertiaryHero.name}</strong></div>
+              </Link>
+            )}
+          </div>
         </div>
       </section>
 
-      <section className="trustBar shell">
-        <div><ShieldCheck/><span><b>Buy with confidence</b><small>Clear condition, warranty & support</small></span></div>
-        <div><Truck/><span><b>Nationwide delivery</b><small>Delivery options shown before payment</small></span></div>
-        <div><Zap/><span><b>Fast support</b><small>Need help choosing? Ask a real person</small></span></div>
+      <section className="brandRail shell" aria-label="Popular brands">
+        <span>APPLE</span><span>SAMSUNG</span><span>ANKER</span><span>SONY</span><span>LOGITECH</span><span>HOLLYLAND</span><span>JBL</span>
       </section>
 
-      <section className="categorySection shell">
-        <div className="sectionHead"><div><span className="kicker">SHOP YOUR WAY</span><h2>Find the right tech faster.</h2></div><p>Start with what you need, then narrow by budget, brand and use case.</p></div>
-        <div className="categoryGrid">
-          {[["Phones","Camera, battery, gaming"],["Laptops","Work, school, creative"],["Creator Tools","Mic, lights, tripods"],["Audio","Earbuds, speakers, ANC"],["Accessories","Power, cases, hubs"],["Digital Tools","Templates, guides, AI"]].map(([name,desc],i)=><button key={name} onClick={()=>{setCategory(categories.includes(name)?name:"All");document.getElementById("shop")?.scrollIntoView({behavior:"smooth"})}} className="categoryCard"><span className="categoryNumber">0{i+1}</span><div><h3>{name}</h3><p>{desc}</p></div><ChevronRight/></button>)}
+      <section id="collections" className="collectionSection shell">
+        <div className="premiumSectionHead">
+          <div><span className="kicker">SHOP BY NEED</span><h2>Start with what you’re trying to do.</h2></div>
+          <Link href="/shop" className="sectionLink">View all products <ArrowUpRight size={16}/></Link>
         </div>
-      </section>
 
-      <section id="deals" className="dealSection">
-        <div className="shell dealInner"><div><span className="dealLabel">TECH DEAL OF THE WEEK</span><h2>Build a better setup, for less.</h2><p>Pair the right laptop, productivity mouse and power accessories instead of buying random gear that does not work together.</p><div className="dealPrice"><strong>Build your own setup</strong><span>See live product pricing before checkout</span></div><a href="#shop" className="lightBtn">Start your setup <ArrowRight size={17}/></a></div><div className="dealCards"><div className="miniProduct"><Image src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=85" alt="Laptop" width={420} height={320}/><b>Laptop</b></div><span>+</span><div className="miniProduct"><Image src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=600&q=85" alt="Mouse" width={420} height={320}/><b>Mouse</b></div></div></div>
-      </section>
-
-      <section id="shop" className="shopSection shell">
-        <div className="sectionHead shopHead"><div><span className="kicker">TRENDING RIGHT NOW</span><h2>Tech people are buying.</h2></div><div className="searchBox"><Search size={18}/><input value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search phones, laptops, creator gear..."/></div></div>
-        <div className="filterRow">{categories.map((c)=><button key={c} onClick={()=>setCategory(c)} className={category===c?"active":""}>{c}</button>)}</div>
-        <div className="productGrid">
-          {visibleProducts.map((p)=>{
-            const inCart = lines.some((line) => line.id === p.id);
-            return <article className="productCard" key={p.id}>
-              <div className="productImageWrap">{p.badge && <span className="productBadge">{p.badge}</span>}<button className={`wishBtn ${wishlist.includes(p.id)?"on":""}`} onClick={()=>toggleWishlist(p.id)} aria-label="Add to wishlist"><Heart size={18} fill={wishlist.includes(p.id)?"currentColor":"none"}/></button><Link href={`/product/${p.slug}`}><Image className="productImage" src={p.image} alt={p.name} width={700} height={700} unoptimized/></Link></div>
-              <div className="productInfo"><span className="brandName">{p.brand}</span><Link href={`/product/${p.slug}`}><h3>{p.name}</h3></Link><p>{p.blurb}</p>{p.reviews > 0 && <div className="rating"><Star size={14} fill="currentColor"/> {p.rating} <span>({p.reviews})</span></div>}<div className="priceLine"><strong>{money(p.price)}</strong>{p.oldPrice && <del>{money(p.oldPrice)}</del>}</div><button className={`addBtn ${inCart?"added":""}`} onClick={()=>addItem(p.id)} disabled={p.stock <= 0}>{p.stock <= 0 ? "Out of stock" : inCart?"Add another":"Add to cart"} <ShoppingBag size={17}/></button><Link className="viewProduct" href={`/product/${p.slug}`}>View details <ArrowRight size={14}/></Link></div>
-            </article>;
+        <div className="collectionBento">
+          {categoryMeta.map((item, index) => {
+            const product = productForCategory(item.name);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.name}
+                href={`/shop?category=${encodeURIComponent(item.name)}`}
+                className={`collectionTile collectionTile${index + 1}`}
+              >
+                <div className="collectionTileTop"><Icon size={18}/><span>0{index + 1}</span></div>
+                <div className="collectionTileCopy">
+                  <h3>{item.name}</h3>
+                  <p>{item.copy}</p>
+                </div>
+                {product && <Image src={product.image} alt="" fill sizes="(max-width: 760px) 94vw, 33vw" unoptimized/>}
+                <ArrowUpRight className="collectionArrow" size={20}/>
+              </Link>
+            );
           })}
         </div>
-        {visibleProducts.length === 0 && <div className="emptyState"><Search size={38}/><h3>No matching tech yet.</h3><p>Try a different product, brand or category.</p><button onClick={()=>{setQuery("");setCategory("All")}}>Clear filters</button></div>}
       </section>
 
-      <section id="creator" className="creator shell"><div className="creatorMedia"><Image src="https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=1200&q=90" alt="Creator recording setup" width={900} height={780}/></div><div className="creatorCopy"><span className="kicker">CREATOR TOOLS</span><h2>Make content that sounds and looks expensive.</h2><p>You do not need a full studio to make better content. Start with clear audio, stable framing and dependable lighting.</p><div className="creatorList"><span><Check/> Wireless microphones</span><span><Check/> Tripods & phone rigs</span><span><Check/> Lighting & streaming gear</span><span><Check/> Storage & power</span></div><a href="#shop" className="primaryBtn">Shop creator gear <ArrowRight size={18}/></a></div></section>
+      <section className="premiumDeal">
+        <div className="shell premiumDealInner">
+          <div className="premiumDealCopy">
+            <span className="dealLabel">THE SMART SETUP</span>
+            <h2>Buy the setup.<br/>Not random gadgets.</h2>
+            <p>
+              Start with the main device, then add only the accessories that
+              improve how you work, create or travel.
+            </p>
+            <Link href="/shop" className="lightBtn">Build your setup <ArrowRight size={17}/></Link>
+          </div>
+          <div className="dealFeatureStack">
+            {catalog.slice(2, 5).map((product, index) => (
+              <Link href={`/product/${product.slug}`} className="dealFeatureItem" key={product.id}>
+                <span>0{index + 1}</span>
+                <Image src={product.image} alt={product.name} width={180} height={140} unoptimized/>
+                <div><small>{product.brand}</small><strong>{product.name}</strong><b>{money(product.price)}</b></div>
+                <ArrowUpRight size={18}/>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <section id="insights" className="insights shell"><div className="sectionHead"><div><span className="kicker">TECHMAN INSIGHTS</span><h2>Buy with more confidence.</h2></div><p>Useful buying guides that help customers understand what they are paying for.</p></div><div className="articleGrid">{[["How to choose a phone for content creation","Camera, storage, battery and creator workflow.","/blog/how-to-choose-a-phone-for-content-creation"],["Laptop buying guide","Choose specs around the work you actually do.","/blog/laptop-buying-guide-for-work-school-and-creative-use"],["Creator audio starter guide","Improve clarity before buying more camera gear.","/blog/creator-audio-starter-guide"]].map(([title,desc,href],i)=><article key={title}><span>0{i+1}</span><h3>{title}</h3><p>{desc}</p><Link href={href}>Read the guide <ArrowRight size={16}/></Link></article>)}</div></section>
+      <section id="featured" className="featuredSection shell">
+        <div className="premiumSectionHead featuredHead">
+          <div><span className="kicker">FEATURED NOW</span><h2>Good tech. Clearly presented.</h2></div>
+          <div className="featuredSearch">
+            <Search size={17}/>
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search the collection"/>
+          </div>
+        </div>
 
-      <section className="newsletter"><div className="shell newsletterInner"><div><span className="kicker">FIRST ACCESS</span><h2>Get the deals worth opening.</h2><p>Product drops, useful buying guides and offers without inbox noise.</p></div><NewsletterForm/></div></section>
+        <div className="filterRow premiumFilterRow">
+          {filters.map((item) => (
+            <button key={item} onClick={() => setCategory(item)} className={category === item ? "active" : ""}>{item}</button>
+          ))}
+        </div>
 
-      <footer className="footer"><div className="shell footerGrid"><div><Link href="/" className="brand footerBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link><p>Phones, gadgets and creator tech chosen for how people actually work, create and live.</p></div><div><b>Shop</b><Link href="/shop?category=Phones">Phones</Link><Link href="/shop?category=Laptops">Laptops</Link><Link href="/shop?category=Creator%20Tools">Creator Tools</Link><Link href="/shop">All Products</Link></div><div><b>Help</b><Link href="/track-order">Track order</Link><Link href="/delivery">Delivery</Link><Link href="/returns">Returns</Link><Link href="/warranty">Warranty</Link><Link href="/faq">FAQs</Link></div><div><b>Company</b><Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/trade-in">Trade In</Link><Link href="/device-request">Request a Device</Link><Link href="/corporate">Bulk Orders</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div><div><b>Talk to us</b>{supportLink ? <a className="whatsappLink" href={supportLink} target="_blank" rel="noreferrer">Chat on WhatsApp</a> : <span>WhatsApp contact is being configured</span>}</div></div><div className="shell copyright"><span>© 2026 TechMan AMT. All rights reserved.</span><span>Built for conversion, trust and scale.</span></div></footer>
+        <div className="premiumProductGrid">
+          {visibleProducts.map((product) => {
+            const inCart = lines.some((line) => line.id === product.id);
+            return (
+              <article className="premiumProductCard" key={product.id}>
+                <div className="premiumProductMedia">
+                  {product.badge && <span className="productBadge">{product.badge}</span>}
+                  <button
+                    className={`wishBtn ${wishlist.includes(product.id) ? "on" : ""}`}
+                    onClick={() => toggleWishlist(product.id)}
+                    aria-label="Save product"
+                  >
+                    <Heart size={17} fill={wishlist.includes(product.id) ? "currentColor" : "none"}/>
+                  </button>
+                  <Link href={`/product/${product.slug}`}>
+                    <Image src={product.image} alt={product.name} fill sizes="(max-width: 720px) 92vw, (max-width: 1100px) 46vw, 31vw" unoptimized/>
+                  </Link>
+                </div>
 
-      {supportLink && <a className="floatingWhatsApp" href={supportLink} target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp">WA</a>}
+                <div className="premiumProductBody">
+                  <div className="productMetaLine"><span>{product.brand}</span><span>{product.category}</span></div>
+                  <Link href={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
+                  <p>{product.blurb}</p>
+                  <div className="premiumPriceLine">
+                    <strong>{money(product.price)}</strong>
+                    {product.oldPrice && <del>{money(product.oldPrice)}</del>}
+                  </div>
+                  <div className="premiumCardActions">
+                    <button
+                      className={`premiumAddButton ${inCart ? "added" : ""}`}
+                      onClick={() => addItem(product.id)}
+                      disabled={product.stock <= 0}
+                    >
+                      <ShoppingBag size={16}/>
+                      {product.stock <= 0 ? "Out of stock" : inCart ? "Add another" : "Add to cart"}
+                    </button>
+                    <Link className="premiumDetailButton" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}><ArrowUpRight size={18}/></Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        {visibleProducts.length === 0 && (
+          <div className="emptyState premiumEmptyState">
+            <Search size={34}/><h3>No match yet.</h3><p>Try another product, brand or category.</p>
+            <button onClick={() => { setQuery(""); setCategory("All"); }}>Clear filters</button>
+          </div>
+        )}
+      </section>
+
+      <section className="whySection shell">
+        <div className="whyLead">
+          <span className="kicker">WHY TECHMAN AMT</span>
+          <h2>A store designed to reduce buyer’s remorse.</h2>
+          <p>
+            Clear product condition, useful context, delivery transparency and
+            real support before you spend.
+          </p>
+        </div>
+        <div className="whyGrid">
+          <article><span>01</span><ShieldCheck/><h3>Know what you’re buying</h3><p>Condition, warranty and key product details are shown before checkout.</p></article>
+          <article><span>02</span><Truck/><h3>Delivery without surprises</h3><p>Delivery is calculated before online payment where pricing is configured.</p></article>
+          <article><span>03</span><BadgeCheck/><h3>Useful proof, not fake hype</h3><p>Verified-purchase reviews only appear after a paid order is matched.</p></article>
+        </div>
+      </section>
+
+      <section id="creator" className="editorialSection shell">
+        <div className="editorialMedia">
+          <Image src="https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=1400&q=90" alt="Creator recording setup" fill sizes="(max-width: 900px) 94vw, 55vw"/>
+          <span className="editorialTag">CREATOR ESSENTIALS</span>
+        </div>
+        <div className="editorialCopy">
+          <span className="kicker">CREATE BETTER</span>
+          <h2>Better content starts before the camera rolls.</h2>
+          <p>Clean audio, stable framing and dependable power usually matter more than buying another random accessory.</p>
+          <div className="editorialChecklist">
+            <span><Check/> Wireless microphones</span>
+            <span><Check/> Tripods & phone rigs</span>
+            <span><Check/> Lighting & streaming gear</span>
+            <span><Check/> Storage & power</span>
+          </div>
+          <Link href="/shop?category=Creator%20Tools" className="primaryBtn">Shop creator gear <ArrowRight size={17}/></Link>
+        </div>
+      </section>
+
+      <section className="insights premiumInsights shell">
+        <div className="premiumSectionHead">
+          <div><span className="kicker">TECHMAN INSIGHTS</span><h2>Buy with context.</h2></div>
+          <Link href="/blog" className="sectionLink">See all guides <ArrowUpRight size={16}/></Link>
+        </div>
+
+        <div className="insightGrid">
+          {[
+            ["01", "Buying Guide", "How to choose a phone for content creation", "Camera, storage, battery and creator workflow.", "/blog/how-to-choose-a-phone-for-content-creation"],
+            ["02", "Buying Guide", "Laptop buying guide for work and school", "Choose specs around the work you actually do.", "/blog/laptop-buying-guide-for-work-school-and-creative-use"],
+            ["03", "Creator Tips", "A creator’s starter guide to better audio", "Improve clarity before buying more camera gear.", "/blog/creator-audio-starter-guide"],
+          ].map(([index, type, title, copy, href]) => (
+            <Link href={href} className="insightCard" key={title}>
+              <div><span>{index}</span><small>{type}</small></div>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+              <b>Read guide <ArrowUpRight size={15}/></b>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="newsletter premiumNewsletter">
+        <div className="shell premiumNewsletterInner">
+          <div>
+            <span className="kicker">FIRST ACCESS</span>
+            <h2>Useful drops. No inbox noise.</h2>
+            <p>New products, buying guides and offers worth opening.</p>
+          </div>
+          <NewsletterForm/>
+        </div>
+      </section>
+
+      <footer className="footer premiumFooter">
+        <div className="shell premiumFooterTop">
+          <div className="footerBrandBlock">
+            <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
+            <p>Phones, gadgets and creator tech chosen for how people actually work, create and live.</p>
+          </div>
+          <div><b>Shop</b><Link href="/shop?category=Phones">Phones</Link><Link href="/shop?category=Laptops">Laptops</Link><Link href="/shop?category=Creator%20Tools">Creator Tools</Link><Link href="/shop">All Products</Link></div>
+          <div><b>Help</b><Link href="/track-order">Track order</Link><Link href="/delivery">Delivery</Link><Link href="/returns">Returns</Link><Link href="/warranty">Warranty</Link></div>
+          <div><b>Company</b><Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/trade-in">Trade In</Link><Link href="/corporate">Bulk Orders</Link></div>
+          <div><b>Support</b>{supportLink ? <a className="whatsappLink" href={supportLink} target="_blank" rel="noreferrer">WhatsApp support</a> : <span>WhatsApp being configured</span>}<Link href="/faq">FAQs</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div>
+        </div>
+        <div className="shell copyright premiumCopyright"><span>© 2026 TechMan AMT</span><span>Built for clarity, trust and better buying decisions.</span></div>
+      </footer>
+
+      <nav className="mobileDock" aria-label="Mobile navigation">
+        <Link href="/"><span className="dockIcon"><Sparkles size={18}/></span><small>Home</small></Link>
+        <Link href="/shop"><span className="dockIcon"><Search size={18}/></span><small>Shop</small></Link>
+        <Link href="/wishlist" className="dockBadge"><span className="dockIcon"><Heart size={18}/></span><small>Saved</small>{wishlist.length > 0 && <em>{wishlist.length}</em>}</Link>
+        <Link href="/cart" className="dockBadge"><span className="dockIcon"><ShoppingBag size={18}/></span><small>Cart</small>{totalItems > 0 && <em>{totalItems}</em>}</Link>
+      </nav>
+
+      {supportLink && <a className="floatingWhatsApp premiumWhatsapp" href={supportLink} target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp">WA</a>}
     </main>
   );
 }
