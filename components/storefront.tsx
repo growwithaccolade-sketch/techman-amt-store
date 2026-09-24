@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, Check, ChevronRight, Heart, Menu, Search, ShieldCheck, ShoppingBag, Sparkles, Star, Truck, X, Zap } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, Heart, Menu, Search, ShieldCheck, ShoppingBag, Sparkles, Star, Truck, UserRound, X, Zap } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
 import { makeWhatsappUrl } from "@/lib/site";
@@ -31,10 +31,10 @@ export default function Storefront() {
       <header className="nav shell">
         <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
         <nav className="desktopNav"><Link href="/shop">Shop</Link><a href="#deals">Deals</a><a href="#creator">Creator Tools</a><Link href="/blog">Tech Insights</Link></nav>
-        <div className="navActions"><button className="iconBtn" aria-label="Search" onClick={() => document.getElementById("shop")?.scrollIntoView({behavior:"smooth"})}><Search size={19}/></button><Link className="iconBtn badgeWrap" aria-label="Wishlist" href="/wishlist"><Heart size={19}/>{wishlist.length > 0 && <span className="count">{wishlist.length}</span>}</Link><Link className="cartBtn" href="/cart"><ShoppingBag size={18}/> Cart <span>{totalItems}</span></Link><button className="menuBtn" onClick={() => setMobileOpen(true)} aria-label="Open menu"><Menu/></button></div>
+        <div className="navActions"><button className="iconBtn" aria-label="Search" onClick={() => document.getElementById("shop")?.scrollIntoView({behavior:"smooth"})}><Search size={19}/></button><Link className="iconBtn" aria-label="Account" href="/account"><UserRound size={19}/></Link><Link className="iconBtn badgeWrap" aria-label="Wishlist" href="/wishlist"><Heart size={19}/>{wishlist.length > 0 && <span className="count">{wishlist.length}</span>}</Link><Link className="cartBtn" href="/cart"><ShoppingBag size={18}/> Cart <span>{totalItems}</span></Link><button className="menuBtn" onClick={() => setMobileOpen(true)} aria-label="Open menu"><Menu/></button></div>
       </header>
 
-      {mobileOpen && <div className="mobileMenu"><button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button><Link href="/shop" onClick={()=>setMobileOpen(false)}>Shop</Link><a href="#deals" onClick={()=>setMobileOpen(false)}>Deals</a><a href="#creator" onClick={()=>setMobileOpen(false)}>Creator Tools</a><Link href="/blog" onClick={()=>setMobileOpen(false)}>Tech Insights</Link><Link href="/wishlist" onClick={()=>setMobileOpen(false)}>Wishlist ({wishlist.length})</Link><Link href="/cart" onClick={()=>setMobileOpen(false)}>Cart ({totalItems})</Link></div>}
+      {mobileOpen && <div className="mobileMenu"><button onClick={() => setMobileOpen(false)} aria-label="Close menu"><X/></button><Link href="/shop" onClick={()=>setMobileOpen(false)}>Shop</Link><a href="#deals" onClick={()=>setMobileOpen(false)}>Deals</a><a href="#creator" onClick={()=>setMobileOpen(false)}>Creator Tools</a><Link href="/blog" onClick={()=>setMobileOpen(false)}>Tech Insights</Link><Link href="/account" onClick={()=>setMobileOpen(false)}>Account</Link><Link href="/wishlist" onClick={()=>setMobileOpen(false)}>Wishlist ({wishlist.length})</Link><Link href="/cart" onClick={()=>setMobileOpen(false)}>Cart ({totalItems})</Link></div>}
 
       <section className="hero shell">
         <div className="heroCopy">
