@@ -5,6 +5,7 @@ import type { Product } from "@/lib/products";
 import { commerceBackendConfigured, getSupabaseAdmin } from "@/lib/supabase/admin";
 import { initializePaystackTransaction } from "@/lib/paystack";
 import { validateCoupon } from "@/lib/coupons";
+import { calculateDelivery } from "@/lib/delivery";
 
 type CheckoutPayload = {
   email?: string;
@@ -55,10 +56,17 @@ export async function POST(request: Request) {
     couponCode = coupon.code;
   }
 
-  const total = Math.max(0, subtotal - discount);
-  if (total <= 0) {
+  const merchandiseTotal = Math.max(0, subtotal - discount);
+  if (merchandiseTotal <= 0) {
     return NextResponse.json({ error: "This order total must be greater than zero to use online payment." }, { status: 400 });
   }
+
+  const delivery = await calculateDelivery(body.state!, merchandiseTotal);
+  if (delivery.configured && !delivery.matched) {
+    return NextResponse.json({ error: delivery.message }, { status: 400 });
+  }
+  const deliveryFee = delivery.fee;
+  const total = merchandiseTotal + deliveryFee;
 
   const reference = `TAMT-${Date.now()}-${randomUUID().slice(0, 8)}`;
   const supabase = getSupabaseAdmin();
@@ -74,7 +82,7 @@ export async function POST(request: Request) {
     subtotal_ngn: subtotal,
     discount_ngn: discount,
     coupon_code: couponCode,
-    delivery_fee_ngn: 0,
+    delivery_fee_ngn: deliveryFee,
     total_ngn: total,
     status: "pending",
     payment_status: "pending",
@@ -105,7 +113,7 @@ export async function POST(request: Request) {
       amountKobo: total * 100,
       reference,
       callbackUrl: `${origin}/payment/verify?reference=${encodeURIComponent(reference)}`,
-      metadata: { orderId: order.id, customerName: body.name, phone: body.phone, couponCode, discount },
+      metadata: { orderId: order.id, customerName: body.name, phone: body.phone, couponCode, discount, deliveryFee, state: body.state },
     });
 
     return NextResponse.json({ authorizationUrl: payment.authorization_url, reference });
