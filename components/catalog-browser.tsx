@@ -5,11 +5,11 @@ import Link from "next/link";
 import { ArrowUpRight, Heart, Search, ShoppingBag } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCart } from "@/components/cart-provider";
-import { money } from "@/lib/products";
+import { money } from "@/lib/products";\nimport ProductImage from "@/components/product-image";
 
 export default function CatalogBrowser({
   title = "Shop TechMan AMT",
-  intro = "Browse phones, laptops, creator tools and everyday technology.",
+  intro = "Phones, laptops, audio, accessories and creator tools.",
   initialCategory = "All",
   initialBrand = "All",
   initialQuery = "",
@@ -53,7 +53,7 @@ export default function CatalogBrowser({
   return (
     <main className="catalogPage shell premiumCatalogPage">
       <section className="catalogHero premiumCatalogHero">
-        <span className="kicker">TECHMAN AMT STORE</span>
+        <span className="kicker">SHOP</span>
         <h1>{title}</h1>
         <p>{intro}</p>
       </section>
@@ -89,7 +89,7 @@ export default function CatalogBrowser({
                     <Heart size={17} fill={wishlist.includes(product.id) ? "currentColor" : "none"}/>
                   </button>
                   <Link href={`/product/${product.slug}`}>
-                    <Image src={product.image} alt={product.name} fill sizes="(max-width: 720px) 92vw, (max-width: 1100px) 46vw, 31vw" unoptimized/>
+                    <ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="(max-width: 720px) 92vw, (max-width: 1100px) 46vw, 31vw"/>
                   </Link>
                 </div>
 
