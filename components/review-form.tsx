@@ -48,13 +48,13 @@ export default function ReviewForm({ productId, productName }: { productId: numb
 
   return (
     <form className="reviewForm" onSubmit={submit}>
-      <div className="reviewFormHead"><span className="kicker">VERIFIED PURCHASE REVIEW</span><h3>Review {productName}</h3><p>Use the order reference and email from your paid order. Reviews are moderated before appearing publicly.</p></div>
+      <div className="reviewFormHead"><span className="kicker">WRITE A REVIEW</span><h3>Review {productName}</h3><p>Use the order reference and email from your paid order.</p></div>
       <div className="fieldGrid"><label>Order reference<input name="orderReference" placeholder="TAMT-..." required/></label><label>Checkout email<input name="email" type="email" required/></label></div>
       <label>Display name<input name="displayName" required maxLength={80}/></label>
       <label>Your rating<div className="starPicker">{[1,2,3,4,5].map((value)=><button type="button" key={value} onClick={()=>setRating(value)} aria-label={String(value) + " stars"} className={value <= rating ? "on" : ""}><Star size={22} fill={value <= rating ? "currentColor" : "none"}/></button>)}</div></label>
       <label>Review title<input name="title" maxLength={120} placeholder="Optional short summary"/></label>
-      <label>Review<textarea name="review" rows={5} minLength={20} maxLength={2000} required placeholder="What was useful, what surprised you, and who would you recommend it to?"/></label>
-      <button className="primaryAction" disabled={state === "sending"}>{state === "sending" ? "Submitting..." : "Submit verified review"}</button>
+      <label>Review<textarea name="review" rows={5} minLength={20} maxLength={2000} required placeholder="Share your experience with this product."/></label>
+      <button className="primaryAction" disabled={state === "sending"}>{state === "sending" ? "Submitting..." : "Submit review"}</button>
       {state === "success" && <div className="leadMessage success"><CheckCircle2 size={18}/>{message}</div>}
       {state === "error" && <div className="leadMessage error">{message}</div>}
     </form>
