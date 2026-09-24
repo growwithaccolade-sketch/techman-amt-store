@@ -17,13 +17,11 @@ export async function POST(request: Request) {
     const { data: order } = await supabase.from("orders").select("id,total_ngn").eq("reference", event.data.reference).maybeSingle();
 
     if (order && event.data.status === "success" && event.data.currency === "NGN" && event.data.amount === Number(order.total_ngn) * 100) {
-      await supabase.from("orders").update({
-        payment_status: "paid",
-        status: "paid",
-        paystack_transaction_id: event.data.id,
-        paid_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }).eq("id", order.id);
+      await supabase.rpc("mark_order_paid", {
+        p_reference: event.data.reference,
+        p_transaction_id: event.data.id ?? null,
+      });
+    }).eq("id", order.id);
     }
   }
 
