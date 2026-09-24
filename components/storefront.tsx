@@ -145,8 +145,7 @@ export default function Storefront() {
           <div className="heroOverline">TECHMAN AMT</div>
           <h1>Technology,<br/><span>properly selected.</span></h1>
           <p>
-            Phones, laptops, creator gear and everyday gadgets selected around
-            how you actually work, create and live.
+            Phones, laptops, audio and creator tools with clear pricing, product details and support.
           </p>
           <div className="premiumHeroCtas">
             <Link className="primaryBtn heroPrimary" href="/shop">Shop products <ArrowRight size={17}/></Link>
@@ -175,13 +174,13 @@ export default function Storefront() {
           <div className="heroStageRail">
             {secondaryHero && (
               <Link href={`/product/${secondaryHero.slug}`} className="heroMiniCard">
-                <ProductImage src={secondaryHero.image} alt={secondaryHero.name} brand={secondaryHero.brand} sizes="220px"/>
+                <ProductImage src={secondaryHero.image} alt={secondaryHero.name} brand={secondaryHero.brand} sizes="220px" priority/>
                 <div><span>{secondaryHero.category}</span><strong>{secondaryHero.name}</strong></div>
               </Link>
             )}
             {tertiaryHero && (
               <Link href={`/product/${tertiaryHero.slug}`} className="heroMiniCard">
-                <ProductImage src={tertiaryHero.image} alt={tertiaryHero.name} brand={tertiaryHero.brand} sizes="220px"/>
+                <ProductImage src={tertiaryHero.image} alt={tertiaryHero.name} brand={tertiaryHero.brand} sizes="220px" priority/>
                 <div><span>{tertiaryHero.category}</span><strong>{tertiaryHero.name}</strong></div>
               </Link>
             )}
