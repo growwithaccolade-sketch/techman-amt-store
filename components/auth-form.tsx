@@ -95,8 +95,8 @@ export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" | "forg
 
   return <main className="authPage">
     <section className="authCard">
-      <Link href="/" className="brand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
-      <div className="authIntro"><span className="kicker">CUSTOMER ACCOUNT</span><h1>{title}</h1><p>{mode === "sign-in" ? "See your order history and keep account access in one place." : mode === "sign-up" ? "Create an account with email and password. Checkout can still work without an account." : mode === "forgot" ? "Enter your account email to request a secure recovery link." : "Use a strong password you do not reuse elsewhere."}</p></div>
+      <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
+      <div className="authIntro"><span className="kicker">CUSTOMER ACCOUNT</span><h1>{title}</h1><p>{mode === "sign-in" ? "View your orders and account details." : mode === "sign-up" ? "Create an account with email and password. Guest checkout remains available." : mode === "forgot" ? "Enter your account email to request a secure recovery link." : "Use a strong password you do not reuse elsewhere."}</p></div>
 {(mode === "sign-in" || mode === "sign-up") && <><button type="button" className="oauthButton" onClick={signInWithGoogle}>Continue with Google</button><div className="authDivider"><span>or use email</span></div></>}
       <form className="authForm" onSubmit={submit}>
         {mode === "sign-up" && <label>Full name<input name="fullName" required autoComplete="name"/></label>}
