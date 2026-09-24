@@ -39,19 +39,41 @@ const categoryMeta = [
   { name: "Accessories", copy: "Chargers, power banks, mice and hubs.", icon: Zap },
 ];
 
-const filters = ["All", "Phones", "Laptops", "Audio", "Accessories", "Creator Tools"];
+const filters = ["All", "Phones", "Laptops", "Tablets", "Watches", "Audio", "Creator Tools", "Accessories", "Gaming"];
 
-const trendingSlugs = [
+const heroSlugs = [
   "iphone-18-pro-max-256gb",
-  "iphone-18-pro-256gb",
   "galaxy-s26-ultra-512gb",
   "airpods-5",
-  "apple-watch-ultra-4",
-  "iphone-16-pro-max-256gb",
-  "samsung-galaxy-s25-ultra-256gb",
-  "macbook-air-m4-13-inch",
-  "hollyland-lark-m2-wireless-mic",
 ];
+
+const featuredSlugs = [
+  "apple-watch-ultra-4",
+  "macbook-pro-14-m5",
+  "sony-wh-1000xm6",
+  "dji-mic-3",
+  "insta360-x5",
+  "nintendo-switch-2",
+  "rog-zephyrus-g14-2026",
+  "airpods-pro-3",
+  "samsung-t9-ssd-2tb",
+];
+
+const dealSlugs = [
+  "anker-737-power-bank",
+  "ugreen-nexode-200w",
+  "logitech-mx-master-3s",
+];
+
+const categoryShowcase: Record<string, string> = {
+  Phones: "google-pixel-11-pro-fold",
+  Laptops: "dell-xps-14",
+  "Creator Tools": "rode-wireless-pro",
+  Audio: "bose-quietcomfort-ultra",
+  Accessories: "ugreen-nexode-200w",
+};
+
+const creatorSlug = "dji-osmo-pocket-3";
 
 const priceLabel = (price: number) => price > 0 ? money(price) : "Price on request";
 
@@ -79,29 +101,35 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
     });
 
     return [...filtered].sort((a, b) => {
-      const ai = trendingSlugs.indexOf(a.slug);
-      const bi = trendingSlugs.indexOf(b.slug);
+      const ai = featuredSlugs.indexOf(a.slug);
+      const bi = featuredSlugs.indexOf(b.slug);
       if (ai !== -1 && bi !== -1) return ai - bi;
       if (ai !== -1) return -1;
       if (bi !== -1) return 1;
-      return a.id - b.id;
+      return b.id - a.id;
     });
   }, [catalog, query, category]);
 
-  const heroProducts = trendingSlugs
-    .map((slug) => catalog.find((product) => product.slug === slug))
-    .filter(Boolean)
-    .slice(0, 3) as typeof catalog;
+  const getBySlug = (slug: string) => catalog.find((product) => product.slug === slug);
+  const heroProducts = heroSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
   const primaryHero = heroProducts[0];
   const secondaryHero = heroProducts[1];
   const tertiaryHero = heroProducts[2];
-  const creatorProduct = catalog.find((product) => product.category === "Creator Tools");
+  const creatorProduct = getBySlug(creatorSlug) || catalog.find((product) => product.category === "Creator Tools");
+  const dealProducts = dealSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
+  const defaultFeatured = featuredSlugs.map(getBySlug).filter(Boolean) as typeof catalog;
+  const defaultMode = category === "All" && !query.trim();
+  const displayProducts = defaultMode
+    ? defaultFeatured
+    : visibleProducts.filter((product) => !heroSlugs.includes(product.slug)).slice(0, 9);
   const heroTitle = (homeContent?.title || "Technology,|properly selected.").split("|");
   const contactSection = homeContent?.sections?.[0];
   const newsletterSection = homeContent?.sections?.[1];
 
   const productForCategory = (name: string) =>
-    catalog.find((product) => product.category === name) || catalog[0];
+    getBySlug(categoryShowcase[name] || "") ||
+    catalog.find((product) => product.category === name && !heroSlugs.includes(product.slug) && !featuredSlugs.includes(product.slug)) ||
+    catalog[0];
 
   return (
     <main className="siteFrame">
@@ -250,7 +278,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
             <Link href="/shop" className="lightBtn">Browse accessories <ArrowRight size={17}/></Link>
           </div>
           <div className="dealFeatureStack">
-            {catalog.slice(2, 5).map((product, index) => (
+            {dealProducts.map((product, index) => (
               <Link href={`/product/${product.slug}`} className="dealFeatureItem" key={product.id}>
                 <span>0{index + 1}</span>
                 <div className="dealFeatureMedia"><ProductImage src={product.image} alt={product.name} brand={product.brand} sizes="150px"/></div>
@@ -278,7 +306,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
         </div>
 
         <div className="premiumProductGrid">
-          {visibleProducts.slice(0, 9).map((product) => {
+          {displayProducts.map((product) => {
             const inCart = lines.some((line) => line.id === product.id);
             return (
               <article className="premiumProductCard" key={product.id}>
@@ -330,7 +358,7 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
           })}
         </div>
 
-        {visibleProducts.length === 0 && (
+        {displayProducts.length === 0 && (
           <div className="emptyState premiumEmptyState">
             <Search size={34}/><h3>No match yet.</h3><p>Try another product, brand or category.</p>
             <button onClick={() => { setQuery(""); setCategory("All"); }}>Clear filters</button>
