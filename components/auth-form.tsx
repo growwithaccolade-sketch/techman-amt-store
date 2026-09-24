@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createCustomerBrowserClient } from "@/lib/supabase/client";
+import BrandLogo from "@/components/brand-logo";
 
 export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" | "forgot" | "update" }) {
   const router = useRouter();
@@ -95,7 +96,7 @@ export default function AuthForm({ mode }: { mode: "sign-in" | "sign-up" | "forg
 
   return <main className="authPage">
     <section className="authCard">
-      <Link href="/" className="brand premiumBrand"><span className="brandMark">T</span><span>TECHMAN <b>AMT</b></span></Link>
+      <BrandLogo/>
       <div className="authIntro"><span className="kicker">CUSTOMER ACCOUNT</span><h1>{title}</h1><p>{mode === "sign-in" ? "View your orders and account details." : mode === "sign-up" ? "Create an account with email and password. Guest checkout remains available." : mode === "forgot" ? "Enter your account email to request a secure recovery link." : "Use a strong password you do not reuse elsewhere."}</p></div>
 {(mode === "sign-in" || mode === "sign-up") && <><button type="button" className="oauthButton" onClick={signInWithGoogle}>Continue with Google</button><div className="authDivider"><span>or use email</span></div></>}
       <form className="authForm" onSubmit={submit}>
