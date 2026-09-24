@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
@@ -68,6 +67,7 @@ export default function Storefront() {
   const primaryHero = heroProducts[0];
   const secondaryHero = heroProducts[1];
   const tertiaryHero = heroProducts[2];
+  const creatorProduct = catalog.find((product) => product.category === "Creator Tools");
 
   const productForCategory = (name: string) =>
     catalog.find((product) => product.category === name) || catalog[0];
@@ -329,8 +329,8 @@ export default function Storefront() {
 
       <section id="creator" className="editorialSection shell">
         <div className="editorialMedia">
-          <Image src="https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=1400&q=90" alt="Creator recording setup" fill sizes="(max-width: 900px) 94vw, 55vw"/>
-          <span className="editorialTag">CREATOR ESSENTIALS</span>
+          {creatorProduct && <ProductImage src={creatorProduct.image} alt={creatorProduct.name} brand={creatorProduct.brand} sizes="(max-width: 900px) 94vw, 55vw"/>}
+          <span className="editorialTag">CREATOR TOOLS</span>
         </div>
         <div className="editorialCopy">
           <span className="kicker">CREATE BETTER</span>
