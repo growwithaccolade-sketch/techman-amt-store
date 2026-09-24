@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Search, ShoppingBag } from "lucide-react";
+import { ArrowRight, Heart, Search, ShoppingBag } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
@@ -20,7 +20,7 @@ export default function CatalogBrowser({
   initialBrand?: string;
   initialQuery?: string;
 }) {
-  const { catalog, addItem, lines } = useCart();
+  const { catalog, addItem, lines, wishlist, toggleWishlist } = useCart();
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory);
   const [brand, setBrand] = useState(initialBrand);
@@ -66,6 +66,7 @@ export default function CatalogBrowser({
           return <article className="productCard" key={product.id}>
             <div className="productImageWrap">
               {product.badge && <span className="productBadge">{product.badge}</span>}
+              <button className={`wishBtn ${wishlist.includes(product.id) ? "on" : ""}`} onClick={() => toggleWishlist(product.id)} aria-label="Save product"><Heart size={18} fill={wishlist.includes(product.id) ? "currentColor" : "none"}/></button>
               <Link href={`/product/${product.slug}`}><Image className="productImage" src={product.image} alt={product.name} width={700} height={700} unoptimized/></Link>
             </div>
             <div className="productInfo">
