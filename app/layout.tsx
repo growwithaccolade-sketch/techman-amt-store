@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "TechMan AMT",
     title: "TechMan AMT | Phones, Gadgets & Creator Tech",
-    description: "Phones, laptops, creator gear and everyday tech chosen to help you work, create and stay connected.",
+    description: "Shop phones, laptops, audio, accessories and creator tools in Nigeria.",
     url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
     title: "TechMan AMT",
-    description: "Phones, gadgets and creator tech worth your money.",
+    description: "Phones, laptops, audio, accessories and creator tools in Nigeria.",
   },
 };
 
