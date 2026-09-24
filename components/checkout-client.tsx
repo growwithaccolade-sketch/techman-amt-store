@@ -5,10 +5,10 @@ import Link from "next/link";
 import { CreditCard, LockKeyhole, MessageCircle } from "lucide-react";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
-import { whatsappUrl } from "@/lib/site";
+import { makeWhatsappUrl } from "@/lib/site";
 
 export default function CheckoutClient() {
-  const { catalog, lines } = useCart();
+  const { catalog, settings, lines } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const items = useMemo(() => lines.map((line) => ({ line, product: catalog.find((p) => p.id === line.id) })).filter((x) => x.product), [catalog, lines]);
@@ -22,7 +22,7 @@ export default function CheckoutClient() {
     const submitEvent = e.nativeEvent as SubmitEvent;
     const intent = (submitEvent.submitter as HTMLButtonElement | null)?.value || "online";
     const itemText = items.map(({ line, product }) => `${product?.name} x${line.qty}`).join(", ");
-    const wa = whatsappUrl(`Hello TechMan AMT, I want to place an order. Name: ${data.get("name")}. Phone: ${data.get("phone")}. Delivery: ${data.get("address")}, ${data.get("city")}, ${data.get("state")}. Items: ${itemText}. Subtotal: ${money(subtotal)}.`);
+    const wa = makeWhatsappUrl(settings.whatsappNumber, `Hello TechMan AMT, I want to place an order. Name: ${data.get("name")}. Phone: ${data.get("phone")}. Delivery: ${data.get("address")}, ${data.get("city")}, ${data.get("state")}. Items: ${itemText}. Subtotal: ${money(subtotal)}.`);
 
     if (intent === "whatsapp") {
       if (!wa) {
