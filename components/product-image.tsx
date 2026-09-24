@@ -8,7 +8,7 @@ export default function ProductImage({
   alt,
   brand,
   className,
-  sizes,
+  sizes = "(max-width: 760px) 92vw, 33vw",
   priority = false,
 }: {
   src: string;
@@ -40,7 +40,7 @@ export default function ProductImage({
       fill
       sizes={sizes}
       priority={priority}
-      unoptimized
+      quality={78}
       className={className}
       onError={() => setFailed(true)}
     />
