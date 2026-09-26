@@ -3359,3 +3359,188 @@ body{background:#fff}
   .productArtworkGlyph span{font-size:26px}
   .premiumProductMedia .productArtworkCopy{max-width:70%}
 }
+
+
+/* Homepage UX refactor: dynamic categories, filters, quote modal, footer breathing room */
+.collectionTile2 .collectionTileCopy{
+  top:72px;
+  bottom:auto;
+  max-width:72%;
+}
+.collectionTile3 .collectionTileCopy{
+  left:54px;
+  right:22px;
+  text-align:right;
+}
+.collectionTile3 .collectionTileCopy p{margin-left:auto}
+.collectionTile4 .collectionTileCopy{
+  left:auto;
+  right:64px;
+  width:min(420px,55%);
+  text-align:right;
+}
+.collectionTile4 .collectionTileCopy p{margin-left:auto}
+.collectionTile5 .collectionTileCopy{
+  left:50%;
+  right:18px;
+}
+.premiumFilterRow{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.premiumFilterRow button{
+  cursor:pointer;
+  transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;
+}
+.premiumFilterRow button:hover{transform:translateY(-1px);border-color:#9ca1aa}
+.premiumFilterRow button[aria-pressed="true"]{color:#fff}
+.filterFeedback{
+  min-height:24px;
+  margin:-10px 0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  color:#8b8f96;
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.quoteInlineButton{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#111;
+  font:inherit;
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+  border-bottom:1px solid #111;
+}
+.quoteModalBackdrop{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(6,8,12,.66);
+  backdrop-filter:blur(12px);
+  animation:quoteFade .18s ease both;
+}
+.quoteModal{
+  position:relative;
+  width:min(520px,100%);
+  border-radius:28px;
+  padding:34px;
+  background:#fff;
+  border:1px solid #e2e3df;
+  box-shadow:0 30px 90px rgba(0,0,0,.28);
+  animation:quoteRise .24s cubic-bezier(.2,.8,.2,1) both;
+}
+.quoteModal h2{
+  margin:10px 42px 12px 0;
+  font-size:clamp(34px,5vw,52px);
+  line-height:.94;
+  letter-spacing:-.055em;
+}
+.quoteModal p{margin:0;color:#6c7178;line-height:1.65;font-size:13px}
+.quoteModalClose{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border:1px solid #e0e1dc;
+  border-radius:12px;
+  background:#f7f7f4;
+  cursor:pointer;
+}
+.quoteModalActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:26px;
+}
+.quoteModalActions .primaryBtn,
+.quoteWaitlistButton,
+.quoteWhatsAppButton{
+  min-height:48px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:11px;
+  font-weight:850;
+}
+.quoteWaitlistButton{
+  color:#111;
+  background:#f3f4f0;
+  border:1px solid #dadcd6;
+}
+.quoteWhatsAppButton{
+  grid-column:1/-1;
+  color:#167a42;
+  background:#edfff0;
+  border:1px solid #caedcf;
+}
+.premiumFooterTop{gap:64px}
+@keyframes quoteFade{from{opacity:0}to{opacity:1}}
+@keyframes quoteRise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+
+@media(max-width:760px){
+  .collectionBento{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    padding:0 2px 12px;
+    scrollbar-width:none;
+  }
+  .collectionBento::-webkit-scrollbar{display:none}
+  .collectionTile,
+  .collectionTile1,
+  .collectionTile4{
+    flex:0 0 82vw;
+    min-height:430px;
+    grid-column:auto;
+    grid-row:auto;
+    scroll-snap-align:start;
+  }
+  .collectionTile2 .collectionTileCopy,
+  .collectionTile3 .collectionTileCopy,
+  .collectionTile4 .collectionTileCopy,
+  .collectionTile5 .collectionTileCopy{
+    top:auto;
+    left:20px;
+    right:48px;
+    bottom:20px;
+    width:auto;
+    max-width:none;
+    text-align:left;
+  }
+  .collectionTile3 .collectionTileCopy p,
+  .collectionTile4 .collectionTileCopy p{margin-left:0}
+  .premiumFilterRow{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    padding-bottom:8px;
+    scrollbar-width:none;
+    scroll-snap-type:x proximity;
+  }
+  .premiumFilterRow::-webkit-scrollbar{display:none}
+  .premiumFilterRow button{flex:0 0 auto;scroll-snap-align:start}
+  .filterFeedback{margin-top:-4px}
+  .quoteModal{padding:28px 20px 20px;border-radius:22px}
+  .quoteModalActions{grid-template-columns:1fr}
+  .quoteWhatsAppButton{grid-column:auto}
+  .premiumFooterTop{gap:34px 26px}
+}
