@@ -75,13 +75,14 @@ const categoryShowcase: Record<string, string> = {
 
 const creatorSlug = "dji-osmo-pocket-3";
 
-const priceLabel = (price: number) => price > 0 ? money(price) : "Price on request";
+const priceLabel = (price: number) => price > 0 ? money(price) : "Get quote";
 
 export default function Storefront({ homeContent }: { homeContent?: EditablePage }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [mobileOpen, setMobileOpen] = useState(false);
   const { catalog, settings, lines, wishlist, totalItems, addItem, toggleWishlist } = useCart();
+  const [quoteProduct, setQuoteProduct] = useState<(typeof catalog)[number] | null>(null);
 
   const supportLink = makeWhatsappUrl(
     settings.whatsappNumber,
@@ -365,17 +366,25 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
                   <Link href={`/product/${product.slug}`}><h3>{product.name}</h3></Link>
                   <p>{product.blurb}</p>
                   <div className="premiumPriceLine">
-                    <strong>{priceLabel(product.price)}</strong>
-                    {product.oldPrice && <del>{money(product.oldPrice)}</del>}
+                    {product.price > 0 ? (
+                      <>
+                        <strong>{priceLabel(product.price)}</strong>
+                        {product.oldPrice && <del>{money(product.oldPrice)}</del>}
+                      </>
+                    ) : (
+                      <button className="quoteInlineButton" onClick={() => setQuoteProduct(product)}>
+                        Get quote <ArrowRight size={14}/>
+                      </button>
+                    )}
                   </div>
                   <div className={product.price <= 0 ? "premiumStock request" : product.stock > 0 ? "premiumStock" : "premiumStock out"}>
-                    {product.price <= 0 ? "Availability on request" : product.stock > 0 ? `${product.stock} available` : "Out of stock"}
+                    {product.price <= 0 ? "New release · pricing confirmed on request" : product.stock > 0 ? `${product.stock} available` : "Out of stock"}
                   </div>
                   <div className="premiumCardActions">
                     {product.price <= 0 ? (
-                      <Link className="premiumAddButton requestButton" href={`/device-request?product=${encodeURIComponent(product.name)}`}>
-                        Request price
-                      </Link>
+                      <button className="premiumAddButton requestButton" onClick={() => setQuoteProduct(product)}>
+                        Get quote / join waitlist
+                      </button>
                     ) : (
                       <button
                         className={`premiumAddButton ${inCart ? "added" : ""}`}
@@ -477,6 +486,22 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
           <NewsletterForm/>
         </div>
       </section>
+
+      {quoteProduct && (
+        <div className="quoteModalBackdrop" role="presentation" onClick={() => setQuoteProduct(null)}>
+          <div className="quoteModal" role="dialog" aria-modal="true" aria-labelledby="quoteModalTitle" onClick={(e) => e.stopPropagation()}>
+            <button className="quoteModalClose" onClick={() => setQuoteProduct(null)} aria-label="Close quote dialog"><X size={18}/></button>
+            <span className="kicker">QUICK REQUEST</span>
+            <h2 id="quoteModalTitle">{quoteProduct.name}</h2>
+            <p>Choose the fastest next step. We’ll confirm current pricing, stock and delivery before you commit.</p>
+            <div className="quoteModalActions">
+              <Link className="primaryBtn" href={`/device-request?product=${encodeURIComponent(quoteProduct.name)}&mode=quote`}>Get quote <ArrowRight size={16}/></Link>
+              <Link className="quoteWaitlistButton" href={`/device-request?product=${encodeURIComponent(quoteProduct.name)}&mode=waitlist`}>Join waitlist</Link>
+              {supportLink && <a className="quoteWhatsAppButton" href={supportLink} target="_blank" rel="noreferrer"><MessageCircle size={16}/> Ask on WhatsApp</a>}
+            </div>
+          </div>
+        </div>
+      )}
 
       <nav className="mobileDock" aria-label="Mobile navigation">
         <Link href="/"><span className="dockIcon"><Home size={18}/></span><small>Home</small></Link>
