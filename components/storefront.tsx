@@ -338,8 +338,13 @@ export default function Storefront({ homeContent }: { homeContent?: EditablePage
 
         <div className="filterRow premiumFilterRow">
           {filters.map((item) => (
-            <button key={item} onClick={() => setCategory(item)} className={category === item ? "active" : ""}>{item}</button>
+            <button key={item} type="button" aria-pressed={category === item} onClick={() => setCategory(item)} className={category === item ? "active" : ""}>{item}</button>
           ))}
+        </div>
+
+        <div className="filterFeedback" aria-live="polite">
+          <span>{category === "All" ? "All categories" : category}</span>
+          <span>{displayProducts.length} product{displayProducts.length === 1 ? "" : "s"} shown</span>
         </div>
 
         <div className="premiumProductGrid">
